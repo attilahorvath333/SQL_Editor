@@ -1,0 +1,56 @@
+  <!-- MENU SIDEBAR-->
+  <aside class="menu-sidebar d-none d-lg-block">
+    <div class="logo">
+        <a routerLink="/products">
+            <img src="assets/sql.png" alt="sql_img" class="detail-img">
+        </a>
+    </div>  
+    <div class="row my-3">
+      <div class="col">
+        <button class="btn btn-sm btn-outline-primary" >Side bar button</button>
+      </div>
+    </div>
+    <div class="row my-3">
+      <div class="col">
+        <button class="btn btn-sm btn-outline-primary" >Side bar button</button>
+      </div>
+    </div>   
+</aside>
+
+
+<div class="page-wrapper">
+  <div class="page-container"> 
+      <header>
+      <nav class="navbar navbar-expand-sm navbar-light bg-light">
+        <div class="container-fluid">      
+          <a class="navbar-brand" href="#">
+            <h1>SQL Editor</h1>
+          </a>      
+        </div>
+      </nav>
+    </header>
+      <div class="container-fluid py-3">
+        <div class="row my-3">
+          <div class="col">
+            <label for="SqlLabel" class="form-label">SQL command</label>
+            <textarea class="form-control form-control-sm" id="sqlText" rows="3"></textarea>
+          </div>
+        </div>
+        <div class="row my-3">
+          <div class="col">
+            <button class="btn btn-sm btn-outline-primary" (click)="separate()" >Generate</button>
+          </div>
+        </div>
+        <div class="row my-3">
+          <div class="col">
+            <label for="detailLabel" class="form-label">Details</label>
+            <textarea class="form-control form-control-sm" id="detailText" rows="3"></textarea>
+          </div>
+        </div>
+      </div>
+</div>
+</div>
+
+
+
+ 
