@@ -13,12 +13,43 @@ import { text } from 'stream/consumers';
 })
 export class AppComponent {
 
-  constructor(){}
+ 
+  regexTable: RegExp= /(from|join)\s+(\w+)/g;
+  regexColumn: RegExp= /SELECT\s+(.+?)\s+FROM/i;
+
+  constructor(){
+    
+  }
+  
+  getTableNames(sqlQuery: string): string[] | null {
+    const matchTableName = sqlQuery.match(this.regexTable)?.map(e => e.split(' ')[1]);
+    if (matchTableName==null){return null}
+    else
+    {return matchTableName};
+    
+}  
+
+ getColumnNames(sqlQuery: string): string[] | null {
+
+    const matchColumnName = sqlQuery.match(this.regexColumn)?.map(e => e.split(' ')[1]);
+    if (matchColumnName==null){return null}
+    else
+    {return matchColumnName};
+    
+}  
+
 
 separate() {
-// console.log(this.sqlCommand.value)
 let sqlCommand = document.getElementById('sqlText') as HTMLInputElement;
 let sqlDetail = document.getElementById('detailText') as HTMLInputElement;
+let kacsa: string[] | null ;
+kacsa=this.getColumnNames(sqlCommand.value);
+kacsa?.forEach((value, index) => {
+  console.log(`Elem ${index + 1}: ${value}`);
+});
+console.log("tutykos regex2 tábla : "+ this.getTableNames(sqlCommand.value));
+console.log("tutykos regex oszlop :  "+ this.getColumnNames(sqlCommand.value));
 sqlDetail.value=sqlCommand.value;
+
 }
 }
