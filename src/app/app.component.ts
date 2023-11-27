@@ -62,34 +62,54 @@ export class AppComponent {
     const fromIndex = sqlQuery.toUpperCase().indexOf('FROM');
 
     if (selectIndex !== -1 && fromIndex !== -1 && selectIndex < fromIndex) {
-      const selectClause = sqlQuery.substring(selectIndex + 'SELECT'.length, fromIndex).trim();
+        const selectClause = sqlQuery.substring(selectIndex + 'SELECT'.length, fromIndex).trim();
 
-      // Split the select clause by commas and trim each part
-      const columnParts = selectClause.split(',').map(part => part.trim());
+        // Function to recursively extract column names from nested SELECT statements
+        const extractColumns = (clause: string, nestedParenCount: number = 0): string[] => {
+            const columnParts = clause.split(',').map(part => part.trim());
 
-      // Extract the column names considering "AS" aliases
-      const columnNames = columnParts.map(part => {
-        const asIndex = part.toUpperCase().lastIndexOf(' AS ');
+            return columnParts.flatMap((part: string): string[] => {
+                // Check for nested SELECT inside parentheses (indicating a subquery)
+                const nestedSelectIndex = part.toUpperCase().indexOf('SELECT');
+                const openParenIndex = part.indexOf('(');
+                const closeParenIndex = part.indexOf(')');
 
-        if (asIndex !== -1) {
-          // Extract the alias after the last "AS" and before the comma
-          return part.substring(asIndex + ' AS '.length, part.length).trim();
-        } else {
-          // If no "AS" alias, check for a dot and return the part after the last dot
-          const dotIndex = part.lastIndexOf('.');
+                if (
+                    nestedSelectIndex !== -1 &&
+                    (openParenIndex === -1 ||
+                        (nestedSelectIndex < openParenIndex && nestedSelectIndex > closeParenIndex))
+                ) {
+                    // Recursively extract columns from nested SELECT
+                    return extractColumns(part.substring(nestedSelectIndex), nestedParenCount + 1);
+                }
 
-          if (dotIndex !== -1) {
-            return part.substring(dotIndex + 1);
-          } else {
-            // If no dot, return the original part
-            return part;
-          }
-        }
-      });
+                // Extract the column name considering "AS" aliases
+                const asIndex = part.toUpperCase().lastIndexOf(' AS ');
 
-      return columnNames;
+                if (asIndex !== -1) {
+                    return [part.substring(asIndex + ' AS '.length, part.length).trim()];
+                } else {
+                    const dotIndex = part.lastIndexOf('.');
+                    return dotIndex !== -1 ? [part.substring(dotIndex + 1)] : [part];
+                }
+            });
+        };
+
+        // Extract the column names from the main select clause
+        const columnNames: string[] = extractColumns(selectClause);
+
+        return columnNames;
     } else {
-      return ['Invalid SQL query'];
+        return ['Invalid SQL query'];
     }
-  }
+}
+
+
+
+
+
+
+
+
+
 }
