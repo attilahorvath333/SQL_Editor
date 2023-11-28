@@ -12,6 +12,7 @@ export class AppComponent implements OnInit {
 
   sqlQuery: string = '';
   columns: string[] = [];
+  tableName: string = '';
 
   title = 'sql-query-executor';
 
@@ -27,6 +28,7 @@ export class AppComponent implements OnInit {
   executeQuery() {
     // Parse the SQL query to extract column names
     this.columns = this.parseSqlQuery(this.sqlQuery);
+    console.log(this.columns);
   }
 
   getTableNames(sqlQuery: string): string[] | null {
@@ -57,6 +59,7 @@ export class AppComponent implements OnInit {
     sqlDetail.value = sqlCommand.value;
 
   }
+
 
   private parseSqlQuery(sqlQuery: string): string[] {
     const selectIndex = sqlQuery.toUpperCase().indexOf('SELECT');
@@ -107,9 +110,12 @@ export class AppComponent implements OnInit {
     }
 }
 
-
-
-
+// Method to display the concatenated string in the textarea
+displayTable(): string {
+  // Prefix each column with the table name and join them with commas
+  const columnsWithTableName = this.columns.map(column => `${this.tableName}.${column}`).join(', ');
+  return `${columnsWithTableName}`;
+}
 
 
 }

@@ -52,10 +52,6 @@
           <textarea  class="form-control form-control-sm" id="sqlQuery" rows="3" [(ngModel)]="sqlQuery"></textarea>
         </div>
       </div>
-      <div class="col">
-        <label for="sqlColumns" class="form-label">Columns</label>
-        <textarea class="form-control form-control-sm" id="columns" rows="1" [value]="columns.join(', ')"></textarea>
-      </div>
       <div class="row my-3">
         <div class="col">
           <button class="btn btn-sm btn-outline-primary" (click)="executeQuery()">
@@ -63,12 +59,17 @@
           </button>
         </div>
       </div>
-      <div class="row my-3">
-        <div class="col">
-          <label for="detailLabel" class="form-label">Details</label>
-          <textarea class="form-control form-control-sm" id="detailText" rows="3"></textarea>
-        </div>
+      <div class="col">
+        <label for="sqlColumns" class="form-label">Columns</label>
+        <textarea class="form-control form-control-sm" id="columns" rows="1" [(ngModel)]="columns"></textarea>
       </div>
+      <br>
+      <div>
+        <label for="sqlTable">Table: </label>
+        <input type="text" id="tableName" [(ngModel)]="tableName" class="m-2 rounded p-1" placeholder="Table's name">
+        <textarea readonly class="form-control form-control-sm" id="sqlTable" rows="1">{{ displayTable() }}</textarea>
+      </div>
+
     </div>
   </div>
 </div>
