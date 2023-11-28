@@ -55,21 +55,6 @@ export class AppComponent {
     sqlDetail.value = sqlCommand.value;
 
   }
-/*
-  parseSqlQuery(sqlQuery: string): string[] {
-    // Regular expression to match column aliases after "AS"
-    const regex = /\bas\s+(\w+)/gi;
-
-    // Match all occurrences of the regex in the SQL command
-    const matches = sqlQuery.match(regex);
-
-    // Extract and return the captured group values (column aliases)
-    if (matches) {
-      return matches.map(match => match.split(/\s+/)[1]);
-    }
-
-    return [];
-  }*/
 
   private parseSqlQuery(sqlQuery: string): string[] {
     const selectIndex = sqlQuery.toUpperCase().indexOf('SELECT');
