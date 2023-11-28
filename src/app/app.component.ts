@@ -55,48 +55,72 @@ export class AppComponent {
     sqlDetail.value = sqlCommand.value;
 
   }
+/*
+  parseSqlQuery(sqlQuery: string): string[] {
+    // Regular expression to match column aliases after "AS"
+    const regex = /\bas\s+(\w+)/gi;
+
+    // Match all occurrences of the regex in the SQL command
+    const matches = sqlQuery.match(regex);
+
+    // Extract and return the captured group values (column aliases)
+    if (matches) {
+      return matches.map(match => match.split(/\s+/)[1]);
+    }
+
+    return [];
+  }*/
 
   private parseSqlQuery(sqlQuery: string): string[] {
-    // Simple logic to extract column names (assumes a SELECT statement)
     const selectIndex = sqlQuery.toUpperCase().indexOf('SELECT');
-    const fromIndex = sqlQuery.toUpperCase().indexOf('FROM');
+    const fromIndex = sqlQuery.toUpperCase().lastIndexOf('FROM');
 
     if (selectIndex !== -1 && fromIndex !== -1 && selectIndex < fromIndex) {
-        const selectClause = sqlQuery.substring(selectIndex + 'SELECT'.length, fromIndex).trim();
+    const selectClause = sqlQuery.substring(selectIndex + 'SELECT'.length, fromIndex).trim();
+        console.log("itt: "+selectClause);
 
-        // Function to recursively extract column names from nested SELECT statements
-        const extractColumns = (clause: string, nestedParenCount: number = 0): string[] => {
-            const columnParts = clause.split(',').map(part => part.trim());
+        const extractColumns = (clause: string): string[] => {
+            const columnParts = clause.split(',');
 
             return columnParts.flatMap((part: string): string[] => {
-                // Check for nested SELECT inside parentheses (indicating a subquery)
-                const nestedSelectIndex = part.toUpperCase().indexOf('SELECT');
-                const openParenIndex = part.indexOf('(');
-                const closeParenIndex = part.indexOf(')');
-
-                if (
-                    nestedSelectIndex !== -1 &&
-                    (openParenIndex === -1 ||
-                        (nestedSelectIndex < openParenIndex && nestedSelectIndex > closeParenIndex))
-                ) {
-                    // Recursively extract columns from nested SELECT
-                    return extractColumns(part.substring(nestedSelectIndex), nestedParenCount + 1);
-                }
-
-                // Extract the column name considering "AS" aliases
                 const asIndex = part.toUpperCase().lastIndexOf(' AS ');
 
                 if (asIndex !== -1) {
-                    return [part.substring(asIndex + ' AS '.length, part.length).trim()];
+                    // Extract the alias as the column name
+                    return [part.substring(asIndex + ' AS '.length).trim()];
+
+                } else if (part.toUpperCase().includes('SELECT')) {
+                    // Handle nested SELECT statement inside parentheses
+                    const nestedSelectMatches = part.match(/\(([^)]+)\) AS (\w+)/);
+
+
+                    if (nestedSelectMatches) {
+                        // Extract the alias from the nested SELECT
+                        return [nestedSelectMatches[2]];
+
+                    }
                 } else {
+                    // Extract the column name
                     const dotIndex = part.lastIndexOf('.');
-                    return dotIndex !== -1 ? [part.substring(dotIndex + 1)] : [part];
+                    if (dotIndex !== -1) {
+                        const aliasMatch = part.substring(0, dotIndex).match(/\sAS\s(\w+)$/i);
+                        if (aliasMatch) {
+                            return [aliasMatch[1]];
+                        } else {
+                            return [part.substring(dotIndex + 1).trim()];
+                        }
+                    } else {
+                        return [part.trim()];
+                    }
                 }
+
+                return [];
             });
         };
 
-        // Extract the column names from the main select clause
+        // Extracting column names
         const columnNames: string[] = extractColumns(selectClause);
+
 
         return columnNames;
     } else {

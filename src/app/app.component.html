@@ -7,7 +7,7 @@
   </div>
   <div class="row my-3">
     <div class="col">
-      <button class="btn btn-sm btn-outline-primary">Smth</button>
+      <button class="btn btn-sm btn-outline-primary">Side bar button</button>
     </div>
   </div>
   <div class="row my-3">
@@ -15,6 +15,23 @@
       <button class="btn btn-sm btn-outline-primary">Side bar button</button>
     </div>
   </div>
+  <table id="myTable">
+    <thead>
+      <tr>
+        <th>Primary key</th>
+        <th>Field name</th>
+        <th>Data type</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of columns" >
+        <td><input type="checkbox" name="option1"></td>
+        <td contenteditable='true'>{{item}}</td>
+        <td placeholder="type" contenteditable='true'> </td>
+      </tr>
+    </tbody>
+  </table>
+
 </aside>
 
 <div class="page-wrapper">
@@ -23,7 +40,7 @@
       <nav class="navbar navbar-expand-sm navbar-light bg-light">
         <div class="container-fluid">
           <a class="navbar-brand" href="#">
-            <h1>SQL Editor</h1>
+            <h1>SQL editor</h1>
           </a>
         </div>
       </nav>
