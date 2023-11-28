@@ -8,13 +8,86 @@ import { RouterOutlet } from '@angular/router';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
+isChecked: any;
+
+
+
+adRow() {
+  const tableFields = document.getElementById('columnTable') as HTMLTableElement;
+  const newTableRow = tableFields.insertRow();
+  const cellCheckbox = newTableRow.insertCell(0);
+  const checkboxField = document.createElement('input');
+  checkboxField.type='checkbox';
+  cellCheckbox.appendChild(checkboxField);
+
+  const cellFieldName = newTableRow.insertCell(1);
+  const inputFieldName = document.createElement('input');
+  inputFieldName.type = 'text';
+  inputFieldName.size=6;
+  inputFieldName.placeholder="new field";
+  cellFieldName.appendChild(inputFieldName);
+
+  const cellFieldDataType = newTableRow.insertCell(2);
+  const inputDataType = document.createElement('input');
+  inputDataType.type= 'text';
+  inputDataType.size=4;
+  cellFieldDataType.appendChild(inputDataType);
+
+}
+
+getTableIndex(tabi: HTMLTableElement): number | null {
+
+  let x:number | null=null;
+  for (let i =0; i<tabi.rows.length; i++){
+    const row=tabi.rows[i];
+    row.addEventListener('click', function(event){
+      const clickedRow = event.currentTarget as HTMLTableRowElement;
+      x = clickedRow.rowIndex;
+      console.log("rowindex ez: " + x)
+
+    })
+  }
+return x;
+  
+}
+
+
+
+rowIndex() {
+
+  const tableFields = document.getElementById('columnTable') as HTMLTableElement;
+  console.log(tableFields.rows[1].cells[3])
+  for (let i =0; i<tableFields.rows.length; i++){
+    const row=tableFields.rows[i];
+    row.addEventListener('click', function(event){
+      const clickedRow = event.currentTarget as HTMLTableRowElement;
+      const rowIndex = clickedRow.rowIndex;
+      console.log(`Kattintott sor indexe: ${rowIndex}`);
+    })
+  }
+  }
+
+deleteRow() {
+
+  const tableFields = document.getElementById('columnTable') as HTMLTableElement;
+
+ // const tableFields1 = document.getElementById('kutya') as HTMLInputElement;
+  //console.log("mi van: "+tableFields1.checked);
+  //console.log("mi ez "+tableFields.rows[1].cells[3].)
+  for (let i =0; i<tableFields.rows.length; i++){
+    const row=tableFields.rows[i];
+    row.addEventListener('click', function(event){
+      const clickedRow = event.currentTarget as HTMLTableRowElement;
+      const rowIndex = clickedRow.rowIndex;
+      console.log(`Kattintott sor indexe: ${rowIndex}`);
+    })
+  }
+
+  }
 
   sqlQuery: string = '';
   columns: string[] = [];
-
-
   title = 'sql-query-executor';
-
   regexTable: RegExp = /(from|join)\s+(\w+)/g;
   regexColumn: RegExp = /SELECT\s+(.+?)\s+FROM/i;
 
@@ -25,6 +98,9 @@ export class AppComponent {
   executeQuery() {
     // Parse the SQL query to extract column names
     this.columns = this.parseSqlQuery(this.sqlQuery);
+    
+    
+   
   }
 
   getTableNames(sqlQuery: string): string[] | null {
