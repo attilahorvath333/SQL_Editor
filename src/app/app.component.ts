@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { NgModel } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 
@@ -7,11 +8,10 @@ import { RouterOutlet } from '@angular/router';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
 
   sqlQuery: string = '';
   columns: string[] = [];
-
 
   title = 'sql-query-executor';
 
@@ -19,7 +19,9 @@ export class AppComponent {
   regexColumn: RegExp = /SELECT\s+(.+?)\s+FROM/i;
 
   constructor() {
-
+  }
+  ngOnInit(): void {
+    throw new Error('Method not implemented.');
   }
 
   executeQuery() {
@@ -61,8 +63,8 @@ export class AppComponent {
     const fromIndex = sqlQuery.toUpperCase().lastIndexOf('FROM');
 
     if (selectIndex !== -1 && fromIndex !== -1 && selectIndex < fromIndex) {
-    const selectClause = sqlQuery.substring(selectIndex + 'SELECT'.length, fromIndex).trim();
-        console.log("itt: "+selectClause);
+        const selectClause = sqlQuery.substring(selectIndex + 'SELECT'.length, fromIndex).trim();
+        console.log("Select Clause: " + selectClause);
 
         const extractColumns = (clause: string): string[] => {
             const columnParts = clause.split(',');
@@ -73,32 +75,23 @@ export class AppComponent {
                 if (asIndex !== -1) {
                     // Extract the alias as the column name
                     return [part.substring(asIndex + ' AS '.length).trim()];
-
                 } else if (part.toUpperCase().includes('SELECT')) {
                     // Handle nested SELECT statement inside parentheses
-                    const nestedSelectMatches = part.match(/\(([^)]+)\) AS (\w+)/);
-
+                    const nestedSelectMatches = part.match(/\(([^)]+)\)\s*(\w+)?/);
 
                     if (nestedSelectMatches) {
-                        // Extract the alias from the nested SELECT
-                        return [nestedSelectMatches[2]];
-
+                        // Extract what's after the nested SELECT
+                        const [, nestedSelect, nestedColumn] = nestedSelectMatches;
+                        return [nestedColumn || nestedSelect];
                     }
                 } else {
-                    // Extract the column name
-                    const dotIndex = part.lastIndexOf('.');
-                    if (dotIndex !== -1) {
-                        const aliasMatch = part.substring(0, dotIndex).match(/\sAS\s(\w+)$/i);
-                        if (aliasMatch) {
-                            return [aliasMatch[1]];
-                        } else {
-                            return [part.substring(dotIndex + 1).trim()];
-                        }
-                    } else {
-                        return [part.trim()];
+                    // Extract the column name and alias, handling table prefix
+                    const columnMatch = part.match(/(?:\w+\.)?(\w+)(?:\s*AS\s*(\w+))?/);
+                    if (columnMatch) {
+                        const [, columnName, alias] = columnMatch;
+                        return [alias || columnName];
                     }
                 }
-
                 return [];
             });
         };
@@ -106,15 +99,13 @@ export class AppComponent {
         // Extracting column names
         const columnNames: string[] = extractColumns(selectClause);
 
-
+        console.log("Column Names: " + columnNames);
         return columnNames;
+
     } else {
         return ['Invalid SQL query'];
     }
 }
-
-
-
 
 
 
