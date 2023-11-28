@@ -1,5 +1,5 @@
 <!-- MENU SIDEBAR-->
-<aside class="menu-sidebar d-none d-lg-block">
+<aside class="menu-sidebar d-none d-lg-block" >
   <div class="logo">
     <a routerLink="/products">
       <img src="assets/sql.png" alt="sql_img" class="detail-img" />
@@ -7,30 +7,33 @@
   </div>
   <div class="row my-3">
     <div class="col">
-      <button class="btn btn-sm btn-outline-primary">Side bar button</button>
+      <button class="btn btn-sm btn-outline-primary" (click)="adRow()">Add row</button>
     </div>
   </div>
   <div class="row my-3">
     <div class="col">
-      <button class="btn btn-sm btn-outline-primary">Side bar button</button>
+      <button class="btn btn-sm btn-outline-primary" (click)="deleteRow()">Delete row</button>
     </div>
   </div>
-  <table id="myTable">
+  <table id="columnTable" >
     <thead>
       <tr>
-        <th>Primary key</th>
+        <th>P. key</th>
         <th>Field name</th>
         <th>Data type</th>
+        <th>Del</th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let item of columns" >
-        <td><input type="checkbox" name="option1"></td>
+      <tr *ngFor="let item of columns">
+       <input type="checkbox" name="option1">
         <td contenteditable='true'>{{item}}</td>
         <td placeholder="type" contenteditable='true'> </td>
+        <td><input type="checkbox"   name="option2" id="a"></td>
       </tr>
     </tbody>
   </table>
+ 
 
 </aside>
 
