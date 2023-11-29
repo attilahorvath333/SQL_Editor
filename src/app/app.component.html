@@ -1,5 +1,5 @@
 <!-- MENU SIDEBAR-->
-<aside class="menu-sidebar d-none d-lg-block" >
+<aside class="menu-sidebar d-none d-lg-block">
   <div class="logo">
     <a routerLink="/products">
       <img src="assets/sql.png" alt="sql_img" class="detail-img" />
@@ -15,7 +15,7 @@
       <button class="btn btn-sm btn-outline-primary" (click)="deleteRow()">Delete row</button>
     </div>
   </div>
-  <table id="columnTable" >
+  <table id="columnTable">
     <thead>
       <tr>
         <th>P. key</th>
@@ -26,14 +26,14 @@
     </thead>
     <tbody>
       <tr *ngFor="let item of columns">
-       <input type="checkbox" name="option1">
+        <input type="checkbox" name="option1">
         <td contenteditable='true'>{{item}}</td>
         <td placeholder="type" contenteditable='true'> </td>
-        <td><input type="checkbox"   name="option2" id="a"></td>
+        <td><input type="checkbox" name="option2" id="a"></td>
       </tr>
     </tbody>
   </table>
- 
+
 
 </aside>
 
@@ -52,7 +52,7 @@
       <div class="row my-3">
         <div class="col">
           <label for="sqlQuery" class="form-label">SQL command</label>
-          <textarea  class="form-control form-control-sm" id="sqlQuery" rows="3" [(ngModel)]="sqlQuery"></textarea>
+          <textarea class="form-control form-control-sm" id="sqlQuery" rows="3" [(ngModel)]="sqlQuery"></textarea>
         </div>
       </div>
       <div class="row my-3">
@@ -64,15 +64,21 @@
       </div>
       <div class="col">
         <label for="sqlColumns" class="form-label">Columns</label>
-        <textarea class="form-control form-control-sm" id="columns" rows="1" [(ngModel)]="columns"></textarea>
+        <div class="input-group">
+          <textarea #column class="form-control form-control-sm" id="columns" rows="1" [(ngModel)]="columns"></textarea>
+          <button class="btn btn-outline-primary btn-sm" (click)="copyToClipboard(column.value, 'column')">Copy</button>
+        </div>
       </div>
       <br>
       <div>
         <label for="sqlTable">Table: </label>
         <input type="text" id="tableName" [(ngModel)]="tableName" class="m-2 rounded p-1" placeholder="Table's name">
-        <textarea readonly class="form-control form-control-sm" id="sqlTable" rows="1">{{ displayTable() }}</textarea>
       </div>
-
+      <div class="input-group">
+        <textarea #table readonly class="form-control form-control-sm" id="sqlTable"
+          rows="1">{{ displayTable() }}</textarea>
+        <button class="btn btn-outline-primary btn-sm" (click)="copyToClipboard(table.value, 'table')">Copy</button>
+      </div>
     </div>
   </div>
 </div>
