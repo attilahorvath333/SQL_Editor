@@ -4,17 +4,12 @@ import { NgModel } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
-  styles: [`
-    .dark-snackbar {
-      background-color: #333;
-      color: #fff;
-    }
-  `],
 })
 export class AppComponent implements OnInit {
   isChecked: any;
@@ -23,95 +18,123 @@ export class AppComponent implements OnInit {
   @ViewChild('myInput1') myInput1!: ElementRef;
   @ViewChild('myInput2') myInput2!: ElementRef;
 
-  //Data able creation
+sqlQuery: string = '';
+columns: string[] = [];
+//columnsTable: contains the all fields
+columnsTable: string[] = [];
+tableName: string = '';
+matrixTable: string[][]=[];
+//matrixTableTranspone: contains the fields and types
+matrixTableTranspone: string[][]=[];
+pKeyCheckbox: boolean[] = new Array(500).fill(false);
+delCheckbox: boolean[] = new Array(500).fill(false);
+isnullCheckbox: boolean[] = new Array(500).fill(false);
 
-  adRow() {
-    const tableFields = document.getElementById('columnTable') as HTMLTableElement;
-    const newTableRow = tableFields.insertRow();
-    const cellCheckbox = newTableRow.insertCell(0);
-    const checkboxField = document.createElement('input');
-    checkboxField.type = 'checkbox';
-    cellCheckbox.appendChild(checkboxField);
+title = 'sql-query-executor';
+regexTable: RegExp = /(from|join)\s+(\w+)/g;
+regexColumn: RegExp = /SELECT\s+(.+?)\s+FROM/i;
 
-    const cellFieldName = newTableRow.insertCell(1);
-    const inputFieldName = document.createElement('input');
-    inputFieldName.type = 'text';
-    inputFieldName.size = 6;
-    inputFieldName.placeholder = "new field";
-    cellFieldName.appendChild(inputFieldName);
+constructor(private clipboardService: ClipboardService,
+  private snackBar: MatSnackBar
+  ) {}
 
-    const cellFieldDataType = newTableRow.insertCell(2);
-    const inputDataType = document.createElement('input');
-    inputDataType.type = 'text';
-    inputDataType.size = 4;
-    cellFieldDataType.appendChild(inputDataType);
+adRow() {
+  let typeText:string;
+  const tableFields = document.getElementById('columnTable') as HTMLTableElement;
+  const newTableRow = tableFields.insertRow();
+  const cellCheckbox = newTableRow.insertCell(0);
+  const checkboxField = document.createElement('input');
+  checkboxField.type='checkbox';
 
+  cellCheckbox.appendChild(checkboxField);
+  const cellCheckboxNotNull = newTableRow.insertCell(1);
+  const checkboxNotNull = document.createElement('input');
+  checkboxNotNull.type='checkbox';
+  cellCheckboxNotNull.appendChild(checkboxNotNull);
+
+  const cellFieldName = newTableRow.insertCell(2);
+  const inputFieldName = document.createElement('input');
+  inputFieldName.type = 'text';
+  inputFieldName.size=6;
+  inputFieldName.placeholder="new field";
+  cellFieldName.appendChild(inputFieldName);
+  const cellFieldDataType = newTableRow.insertCell(3);
+  const inputDataType = document.createElement('input');
+  inputDataType.type= 'text';
+  inputDataType.size=4;
+  cellFieldDataType.appendChild(inputDataType);
+  const cellCheckboxDel = newTableRow.insertCell(4);
+  const button = document.createElement("button");
+  button.textContent="ok";
+  button.style.color="blue";
+  button.className="btn btn-primary";
+
+  button.addEventListener("click", () => {
+    let newIstance:string[]=[];
+    newIstance.push(inputFieldName.value);
+    newIstance.push(inputDataType.value);
+    this.matrixTableTranspone.push(newIstance);
+    this.columnsTable.push(inputFieldName.value);
+    typeText=inputDataType.value;
+    console.log(typeText);
+    tableFields.deleteRow(this.columnsTable.length);
+    this.pKeyCheckbox[tableFields.rows.length-1]=checkboxField.checked;
+    this.isnullCheckbox[tableFields.rows.length-1]=checkboxNotNull.checked;
+  });
+  cellCheckboxDel.appendChild(button);
+}
+
+
+onKeydownEvent($event: KeyboardEvent){
+  // <textarea name="" id="" cols="5" rows="1" (keydown)="onKeydownEvent($event)"></textarea>
+  // you can use the following for checking enter key pressed or not
+  if ($event.key === 'Enter') {
+    console.log("ez a lenyomás "+$event.key); // Enter
   }
+  if ($event.key === 'Enter') {
+         //This is 'Shift+Enter'
+  }
+}
 
-  getTableIndex(tabi: HTMLTableElement): number | null {
 
-    let x: number | null = null;
-    for (let i = 0; i < tabi.rows.length; i++) {
-      const row = tabi.rows[i];
-      row.addEventListener('click', function (event) {
-        const clickedRow = event.currentTarget as HTMLTableRowElement;
-        x = clickedRow.rowIndex;
-        console.log("rowindex ez: " + x)
+// get back the data types of fields
+getDataType():string[] {
+  const tableFields = document.getElementById('columnTable') as HTMLTableElement;
+ let  dataTypes: string[] | any =[];
+  for (let i =0; i<tableFields.rows.length-1; i++){
 
-      })
+    dataTypes.push(tableFields.rows[i+1].cells[2].textContent);
+  }
+  return dataTypes;
+}
+
+deleteRow() {
+
+  const tableFields = document.getElementById('columnTable') as HTMLTableElement;
+  let delIndex=0;
+  for (let i =0; i<tableFields.rows.length-1; i++){
+    if (this.delCheckbox[i]) {
+
+    this.columnsTable.splice(delIndex,1);
+    this.matrixTableTranspone.splice(delIndex,1);
+    this.delCheckbox[i]=false;
+    for (let k =i; k<tableFields.rows.length-1; k++){
+    this.pKeyCheckbox[k]= this.pKeyCheckbox[k+1];
+    this.isnullCheckbox[k]= this.isnullCheckbox[k+1];
     }
-    return x;
-
-  }
-
-
-
-  rowIndex() {
-
-    const tableFields = document.getElementById('columnTable') as HTMLTableElement;
-    console.log(tableFields.rows[1].cells[3])
-    for (let i = 0; i < tableFields.rows.length; i++) {
-      const row = tableFields.rows[i];
-      row.addEventListener('click', function (event) {
-        const clickedRow = event.currentTarget as HTMLTableRowElement;
-        const rowIndex = clickedRow.rowIndex;
-        console.log(`Kattintott sor indexe: ${rowIndex}`);
-      })
+    delIndex--;
     }
+    delIndex++;
+   // console.log("ez a "+i+" -dik nagyteszt a deletnek: "+this.approvalCheckboxes2[i]);
+   // console.log("ez a "+i+" -dik nagyteszt a pkeynek: "+this.approvalCheckboxes[i]);
+   //console.log("hányszor fut a ciklus: " + i);
+  }
   }
 
-  deleteRow() {
-
-    const tableFields = document.getElementById('columnTable') as HTMLTableElement;
-
-    // const tableFields1 = document.getElementById('kutya') as HTMLInputElement;
-    //console.log("mi van: "+tableFields1.checked);
-    //console.log("mi ez "+tableFields.rows[1].cells[3].)
-    for (let i = 0; i < tableFields.rows.length; i++) {
-      const row = tableFields.rows[i];
-      row.addEventListener('click', function (event) {
-        const clickedRow = event.currentTarget as HTMLTableRowElement;
-        const rowIndex = clickedRow.rowIndex;
-        console.log(`Kattintott sor indexe: ${rowIndex}`);
-      })
-    }
-
+  private transposeMatrix(matrix: string[][]): string[][] {
+    return matrix[0].map((_, colIndex) => matrix.map(row => row[colIndex]));
   }
 
-  //End of data table
-
-  sqlQuery: string = '';
-  columns: string[] = [];
-  tableName: string = '';
-
-  title = 'sql-query-executor';
-  regexTable: RegExp = /(from|join)\s+(\w+)/g;
-  regexColumn: RegExp = /SELECT\s+(.+?)\s+FROM/i;
-
-  constructor(private clipboardService: ClipboardService,
-    private snackBar: MatSnackBar
-    ) {
-  }
   copyToClipboard(content: string, inputId: string): void {
     // Get the native input element using the provided inputId
     const copyText: HTMLInputElement = (this as any)[inputId].nativeElement;
@@ -125,16 +148,20 @@ export class AppComponent implements OnInit {
     });
   }
 
-
-  ngOnInit(): void {
-    throw new Error('Method not implemented.');
-  }
-
   executeQuery() {
     // Parse the SQL query to extract column names
     this.columns = this.parseSqlQuery(this.sqlQuery);
-  }
+    this.columnsTable=this.columns.slice();
+    this.matrixTable[0]=this.columns.slice();
+    let emptyArray:string[]=[];
+    emptyArray.fill("",0,this.columns.length);
+    this.matrixTable[1]=emptyArray.slice();
+    this.matrixTable[1].fill("",0,this.columns.length);
+    this.matrixTableTranspone= this.transposeMatrix(this.matrixTable);
 
+
+  }
+/*
   getTableNames(sqlQuery: string): string[] | null {
     const matchTableName = sqlQuery.match(this.regexTable)?.map(e => e.split(' ')[1]);
     if (matchTableName == null) { return null }
@@ -148,8 +175,9 @@ export class AppComponent implements OnInit {
     else { return matchColumnName };
 
   }
+  */
 
-
+/*
   separate() {
     let sqlCommand = document.getElementById('sqlText') as HTMLInputElement;
     let sqlDetail = document.getElementById('detailText') as HTMLInputElement;
@@ -163,15 +191,15 @@ export class AppComponent implements OnInit {
     sqlDetail.value = sqlCommand.value;
 
   }
-
+*/
 
   private parseSqlQuery(sqlQuery: string): string[] {
     const selectIndex = sqlQuery.toUpperCase().indexOf('SELECT');
     const fromIndex = sqlQuery.toUpperCase().lastIndexOf('FROM');
 
     if (selectIndex !== -1 && fromIndex !== -1 && selectIndex < fromIndex) {
-      const selectClause = sqlQuery.substring(selectIndex + 'SELECT'.length, fromIndex).trim();
-      console.log("Select Clause: " + selectClause);
+        const selectClause = sqlQuery.substring(selectIndex + 'SELECT'.length, fromIndex).trim();
+        // console.log("Select Clause: " + selectClause);
 
       const extractColumns = (clause: string): string[] => {
         const columnParts = clause.split(',');
