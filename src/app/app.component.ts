@@ -121,7 +121,7 @@ export class AppComponent implements OnInit {
     this.clipboardService.copyFromContent(content);
     // Show a MatSnackBar notification
     this.snackBar.open(`Copied the text: ${content}`, 'Close', {
-      duration: 3000000,
+      duration: 3000,
     });
   }
 
