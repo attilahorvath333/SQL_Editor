@@ -15,26 +15,25 @@
       <button class="btn btn-sm btn-outline-primary" (click)="deleteRow()">Delete row</button>
     </div>
   </div>
-  <table id="columnTable" >
+  <table id="columnTable">
     <thead>
       <tr>
         <th>P. key</th>
+        <th>Not null</th>
         <th>Field name</th>
         <th>Data type</th>
         <th>Del</th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let item of columns">
-       <input type="checkbox" name="option1">
-        <td contenteditable='true'>{{item}}</td>
-        <td placeholder="type" contenteditable='true'> </td>
-        <td><input type="checkbox"   name="option2" id="a"></td>
-      </tr>
-    </tbody>
+    <tr *ngFor="let row of matrixTableTranspone, let i = index">
+      <td> <input type="checkbox" [(ngModel)]="pKeyCheckbox[i]"> </td>
+      <td> <input type="checkbox" [(ngModel)]="isnullCheckbox[i]"> </td>
+      <td *ngFor="let cell of row " contenteditable='true'>{{ cell }}</td>
+      <td> <input type="checkbox"    [(ngModel)]="delCheckbox[i]"> </td>
+    </tr>
+  </tbody>
   </table>
- 
-
 </aside>
 
 <div class="page-wrapper">
