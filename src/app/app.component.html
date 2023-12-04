@@ -66,7 +66,7 @@
       <div class="col">
         <label for="sqlColumns" class="form-label">Columns</label>
         <div class="input-group">
-          <textarea #column class="form-control form-control-sm" id="columns" rows="1" [(ngModel)]="columns"></textarea>
+          <textarea #column class="form-control form-control-sm" id="columns" rows="1">{{ displayColumn() }}</textarea>
           <button class="btn btn-outline-primary btn-sm" (click)="copyToClipboard(column.value, 'column')">Copy</button>
         </div>
       </div>
@@ -79,6 +79,10 @@
         <textarea #table readonly class="form-control form-control-sm" id="sqlTable"
           rows="1">{{ displayTable() }}</textarea>
         <button class="btn btn-outline-primary btn-sm" (click)="copyToClipboard(table.value, 'table')">Copy</button>
+      </div>
+      <div>
+        <label>Test for type:</label>
+        <textarea class="form-control form-control-sm" id="test">{{ displayMatrixTableTranspone() }}</textarea>
       </div>
     </div>
   </div>
