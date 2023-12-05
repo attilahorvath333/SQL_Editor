@@ -15,6 +15,12 @@
       <button class="btn btn-sm btn-outline-primary" (click)="deleteRow()">Delete row</button>
     </div>
   </div>
+  <div class="row my-3">
+    <div class="col">
+      <button class="btn btn-sm btn-outline-primary" (click)="editRows()" id="editButton">Edit</button>
+      <button class="btn btn-sm btn-outline-primary" (click)="updateRows()" id="updateButton" hidden="true">Update</button>
+    </div>
+  </div>
   <table id="columnTable">
     <thead>
       <tr>
@@ -26,11 +32,11 @@
       </tr>
     </thead>
     <tbody>
-    <tr *ngFor="let row of matrixTableTranspone, let i = index">
-      <td> <input type="checkbox" [(ngModel)]="pKeyCheckbox[i]"> </td>
+    <tr *ngFor="let row of matrixTableTranspone, let i = index" >
+      <td> <input type="checkbox" id="pKeyChk" [(ngModel)]="pKeyCheckbox[i]"> </td>
       <td> <input type="checkbox" [(ngModel)]="isnullCheckbox[i]"> </td>
-      <td *ngFor="let cell of row " contenteditable='true'>{{ cell }}</td>
-      <td> <input type="checkbox"    [(ngModel)]="delCheckbox[i]"> </td>
+      <td *ngFor="let cell of row let k = index" contenteditable='false' id="matrixData"> {{cell}}  </td>
+      <td> <input type="checkbox" id="delChk"   [(ngModel)]="delCheckbox[i]"> </td>
     </tr>
   </tbody>
   </table>
@@ -63,7 +69,7 @@
       </div>
       <div class="col">
         <label for="sqlColumns" class="form-label">Columns</label>
-        <textarea class="form-control form-control-sm" id="columns" rows="1" [(ngModel)]="columns"></textarea>
+        <textarea class="form-control form-control-sm" id="columns" rows="1" [(ngModel)]="matrixTableTranspone"></textarea>
       </div>
       <br>
       <div>
@@ -71,7 +77,6 @@
         <input type="text" id="tableName" [(ngModel)]="tableName" class="m-2 rounded p-1" placeholder="Table's name">
         <textarea readonly class="form-control form-control-sm" id="sqlTable" rows="1">{{ displayTable() }}</textarea>
       </div>
-
     </div>
   </div>
 </div>

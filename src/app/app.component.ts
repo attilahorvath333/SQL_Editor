@@ -17,16 +17,16 @@ columns: string[] = [];
 //columnsTable: contains the all fields
 columnsTable: string[] = [];
 tableName: string = '';
-matrixTable: string[][]=[];
+matrixTable: string [][]=[];
 //matrixTableTranspone: contains the fields and types
 matrixTableTranspone: string[][]=[];
 pKeyCheckbox: boolean[] = new Array(500).fill(false);
 delCheckbox: boolean[] = new Array(500).fill(false);
 isnullCheckbox: boolean[] = new Array(500).fill(false);
-
 title = 'sql-query-executor';
 regexTable: RegExp = /(from|join)\s+(\w+)/g;
 regexColumn: RegExp = /SELECT\s+(.+?)\s+FROM/i;
+
 
 constructor() {
 }
@@ -79,8 +79,10 @@ adRow() {
 
 
 onKeydownEvent($event: KeyboardEvent){
-  // <textarea name="" id="" cols="5" rows="1" (keydown)="onKeydownEvent($event)"></textarea>
-  // you can use the following for checking enter key pressed or not
+  
+  if ($event.key) {
+    console.log("valamiféle lenyomás történt"+$event.key); // Enter
+  }
   if ($event.key === 'Enter') {
     console.log("ez a lenyomás "+$event.key); // Enter
   }
@@ -88,6 +90,40 @@ onKeydownEvent($event: KeyboardEvent){
          //This is 'Shift+Enter' 
   }
 }
+
+editRows(){
+  const tableFields = document.getElementById('columnTable') as HTMLTableElement;
+  for (let i =0; i<tableFields.rows.length-1; i++){
+  tableFields.rows[i+1].cells[2].contentEditable='true';
+  tableFields.rows[i+1].cells[2].style.backgroundColor= 'Cornsilk';
+  tableFields.rows[i+1].cells[3].contentEditable='true';
+  tableFields.rows[i+1].cells[3].style.backgroundColor= 'Cornsilk';
+  }
+  let updateBtn = document.getElementById('updateButton') as HTMLElement;
+  updateBtn.hidden=false;
+  let editBtn = document.getElementById('editButton') as HTMLElement;
+  editBtn.hidden=true;
+}
+
+
+updateRows(){
+  const tableFields = document.getElementById('columnTable') as HTMLTableElement;
+  for (let i =0; i<tableFields.rows.length-1; i++){
+     const checkboxField = document.createElement('input');
+     checkboxField.type='checkbox';
+     let name1 =   tableFields.rows[i+1].cells[2].textContent as string;
+     let name2 =   tableFields.rows[i+1].cells[3].textContent as string; 
+     this.matrixTableTranspone[i][0]=name1;
+     this.matrixTableTranspone[i][1]=name2;
+     tableFields.rows[i+1].cells[2].style.backgroundColor= '#fff';
+     tableFields.rows[i+1].cells[3].style.backgroundColor= '#fff';
+    }
+    let updateBtn = document.getElementById('updateButton') as HTMLElement;
+    updateBtn.hidden=true;
+    let editBtn = document.getElementById('editButton') as HTMLElement;
+    editBtn.hidden=false;
+  }
+
 
 
 // get back the data types of fields
@@ -107,7 +143,6 @@ deleteRow() {
   let delIndex=0;
   for (let i =0; i<tableFields.rows.length-1; i++){
     if (this.delCheckbox[i]) {
-    
     this.columnsTable.splice(delIndex,1);
     this.matrixTableTranspone.splice(delIndex,1);
     this.delCheckbox[i]=false;
@@ -118,9 +153,6 @@ deleteRow() {
     delIndex--;
     }
     delIndex++;
-   // console.log("ez a "+i+" -dik nagyteszt a deletnek: "+this.approvalCheckboxes2[i]);
-   // console.log("ez a "+i+" -dik nagyteszt a pkeynek: "+this.approvalCheckboxes[i]);
-   //console.log("hányszor fut a ciklus: " + i);
   }
   }
 
@@ -128,32 +160,31 @@ deleteRow() {
     return matrix[0].map((_, colIndex) => matrix.map(row => row[colIndex]));
   }
 
+
+
   executeQuery() {
     // Parse the SQL query to extract column names
     this.columns = this.parseSqlQuery(this.sqlQuery);
-    this.columnsTable=this.columns.slice();
-    this.matrixTable[0]=this.columns.slice();
-    let emptyArray:string[]=[];
-    emptyArray.fill("",0,this.columns.length);
-    this.matrixTable[1]=emptyArray.slice();
-    this.matrixTable[1].fill("",0,this.columns.length);
-    this.matrixTableTranspone= this.transposeMatrix(this.matrixTable);
-    
-    
+    this.columnsTable = this.columns.slice();
+    this.matrixTable[0] = this.columns.slice();
+    let emptyArray: string[] = [];
+    emptyArray.fill("", 0, this.columns.length);
+    this.matrixTable[1] = emptyArray.slice();
+    for (let i = 0; i < this.columns.length; i++) {
+      this.matrixTable[1][i]= " ";
+    }
+    this.matrixTableTranspone = this.transposeMatrix(this.matrixTable);
   }
 /*
   getTableNames(sqlQuery: string): string[] | null {
     const matchTableName = sqlQuery.match(this.regexTable)?.map(e => e.split(' ')[1]);
     if (matchTableName == null) { return null }
     else { return matchTableName };
-
   }
-
   getColumnNames(sqlQuery: string): string[] | null {
     const matchColumnName = sqlQuery.match(this.regexColumn)?.map(e => e.split(' ')[1]);
     if (matchColumnName == null) { return null }
     else { return matchColumnName };
-
   }
   */
 
@@ -169,9 +200,10 @@ deleteRow() {
     console.log("tutykos regex2 tábla : " + this.getTableNames(sqlCommand.value));
     console.log("tutykos regex oszlop :  " + this.getColumnNames(sqlCommand.value));
     sqlDetail.value = sqlCommand.value;
-
   }
 */
+
+
 
   private parseSqlQuery(sqlQuery: string): string[] {
     const selectIndex = sqlQuery.toUpperCase().indexOf('SELECT');
@@ -228,6 +260,4 @@ displayTable(): string {
   const columnsWithTableName = this.columns.map(column => `${this.tableName}.${column}`).join(', ');
   return `${columnsWithTableName}`;
 }
-
-
 }
