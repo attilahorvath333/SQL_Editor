@@ -1,8 +1,10 @@
 import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
+//npm install ngx-clipboard --save
 import { ClipboardService } from 'ngx-clipboard';
 import { NgModel } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
+//ng add @angular/material
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { FormsModule } from '@angular/forms';
 
@@ -25,6 +27,7 @@ export class AppComponent implements OnInit {
   textarea1Expanded: boolean = false;
   textarea2Expanded: boolean = false;
   textarea3Expanded: boolean = false;
+  textarea4Expanded: boolean = false;
 
   sqlQuery: string = '';
   columns: string[] = [];
@@ -205,13 +208,8 @@ export class AppComponent implements OnInit {
     let emptyArray: string[] = [];
     emptyArray.fill("", 0, this.columns.length);
     this.matrixTable[1] = emptyArray.slice();
-    for (let i = 0; i < this.columns.length; i++) {
-      this.matrixTable[1][i]= " ";
-    }
-    //this.matrixTable[1].fill("d", 0, this.columns.length);
+    this.matrixTable[1].fill("", 0, this.columns.length);
     this.matrixTableTranspone = this.transposeMatrix(this.matrixTable);
-
-
   }
   /*
     getTableNames(sqlQuery: string): string[] | null {
