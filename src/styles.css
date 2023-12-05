@@ -47,7 +47,7 @@ button{
 }
 
 img{
-  max-width:100%;
+  max-width:30%;
   height:auto
 }
 
@@ -115,7 +115,8 @@ a,a:hover{
 
 .page-container{
   background:#e5e5e5;
-  padding-left:200px
+  padding-left:170px;
+  padding-right:10px
 }
 
 .main-content{
@@ -339,7 +340,7 @@ input.au-input.au-input-xl{
 */
 
 .menu-sidebar{
-  width:200px;
+  width:300px;
   position:fixed;
   left:0;
   top:0;
@@ -1063,8 +1064,8 @@ footer ul li{
       border:0;
       padding:8px 0
   }
-}
 
+}
 
 
 html, body { height: 100%; }

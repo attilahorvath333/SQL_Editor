@@ -10,17 +10,28 @@ import { FormsModule } from '@angular/forms';
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
+  template: `
+  <textarea appExpandable [(expanded)]="textarea1Expanded"></textarea>
+  <textarea appExpandable [(expanded)]="textarea2Expanded"></textarea>
+  <!-- Add more textareas as needed -->
+`
 })
 export class AppComponent implements OnInit {
   isChecked: any;
   @ViewChild('table') table!: ElementRef;
   @ViewChild('column') column!: ElementRef;
+  @ViewChild('tempTable') tempTable!: ElementRef;
+
+  textarea1Expanded: boolean = false;
+  textarea2Expanded: boolean = false;
+  textarea3Expanded: boolean = false;
 
   sqlQuery: string = '';
   columns: string[] = [];
   //columnsTable: contains the all fields
   columnsTable: string[] = [];
   tableName: string = '';
+  tempTableName: string = '';
   matrixTable: string[][] = [];
   //matrixTableTranspone: contains the fields and types
   matrixTableTranspone: string[][] = [];
@@ -101,11 +112,11 @@ export class AppComponent implements OnInit {
 
   // get back the data types of fields
   getDataType(): string[] {
-    const tableFields = document.getElementById('columnTable') as HTMLTableElement;
+    const tableFields = document.getElementById('dataTable') as HTMLTableElement;
     let dataTypes: string[] | any = [];
     for (let i = 0; i < tableFields.rows.length - 1; i++) {
 
-      dataTypes.push(tableFields.rows[i + 1].cells[2].textContent);
+      dataTypes.push(tableFields.rows[i + 1].cells[3].textContent);
     }
     return dataTypes;
   }
@@ -141,15 +152,18 @@ export class AppComponent implements OnInit {
   copyToClipboard(content: string, inputId: string): void {
     // Get the native input element using the provided inputId
     const copyText: HTMLInputElement = (this as any)[inputId].nativeElement;
+    // Replace newline characters with appropriate line break characters
+    const contentWithLineBreaks = content.replace(/\n/g, '\r\n');
     // Select the text field
     copyText.select();
-    // Copy the text using the ClipboardService
-    this.clipboardService.copyFromContent(content);
+    // Copy the modified text using the ClipboardService
+    this.clipboardService.copyFromContent(contentWithLineBreaks);
     // Show a MatSnackBar notification
     this.snackBar.open(`Copied the text: ${content}`, 'Close', {
       duration: 3000,
     });
   }
+
 
   executeQuery() {
     // Parse the SQL query to extract column names
@@ -159,7 +173,10 @@ export class AppComponent implements OnInit {
     let emptyArray: string[] = [];
     emptyArray.fill("", 0, this.columns.length);
     this.matrixTable[1] = emptyArray.slice();
-    this.matrixTable[1].fill("", 0, this.columns.length);
+    for (let i = 0; i < this.columns.length; i++) {
+      this.matrixTable[1][i]= " ";
+    }
+    //this.matrixTable[1].fill("d", 0, this.columns.length);
     this.matrixTableTranspone = this.transposeMatrix(this.matrixTable);
 
 
@@ -248,20 +265,24 @@ export class AppComponent implements OnInit {
   // Method to display the concatenated string in the textarea
   displayTable(): string {
     // Prefix each column with the table name and join them with commas
-    const columnsWithTableName = this.columnsTable.map(column => `${this.tableName}.${column}`).join(', ');
+    const columnsWithTableName = this.matrixTableTranspone.map(matrix => `${this.tableName}.${matrix[0]}`).join(', ');
     return `${columnsWithTableName}`;
   }
 
   displayColumn(): string {
-    // Prefix each column with the table name and join them with commas
-    const columnsName = this.columnsTable.map(column => `${column}`).join(', ');
+    const columnsName = this.matrixTableTranspone.map(matrix => `${matrix[0]}`).join(', ');
     return `${columnsName}`;
   }
 
   displayMatrixTableTranspone(): string {
     const columnAndType = this.matrixTableTranspone.map(matrix => `${matrix[0]}` + ' ' + `${matrix[1]}`).join(', ');
-    console.log(this.matrixTableTranspone);
+    //console.log(this.matrixTableTranspone);
     return `${columnAndType}`;
+  }
+
+  displayTableAndField(): string {
+    const tableNameAndField = this.matrixTableTranspone.map(matrix => `${this.tableName}`+'.'+`${matrix[0]}`).join(', ');
+    return `${tableNameAndField}`
   }
 
 }

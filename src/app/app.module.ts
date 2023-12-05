@@ -5,9 +5,10 @@ import { ClipboardModule } from 'ngx-clipboard';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { ExpandableDirective } from './expandable.directive';
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent, ExpandableDirective],
   imports: [
     BrowserModule,
     FormsModule,

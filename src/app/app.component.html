@@ -2,17 +2,21 @@
 <aside class="menu-sidebar d-none d-lg-block">
   <div class="logo">
     <a routerLink="/products">
-      <img src="assets/sql.png" alt="sql_img" class="detail-img" />
+      <img src="assets/sql.png" alt="sql_img" class="img" />
     </a>
   </div>
   <div class="row my-3">
     <div class="col">
-      <button class="btn btn-sm btn-outline-primary" (click)="adRow()">Add row</button>
+      <button class="btn btn-sm btn-outline-primary" (click)="adRow()">
+        Add row
+      </button>
     </div>
   </div>
   <div class="row my-3">
     <div class="col">
-      <button class="btn btn-sm btn-outline-primary" (click)="deleteRow()">Delete row</button>
+      <button class="btn btn-sm btn-outline-primary" (click)="deleteRow()">
+        Delete row
+      </button>
     </div>
   </div>
   <table id="columnTable">
@@ -26,16 +30,14 @@
       </tr>
     </thead>
     <tbody>
-    <tr *ngFor="let row of matrixTableTranspone, let i = index">
-      <td> <input type="checkbox" [(ngModel)]="pKeyCheckbox[i]"> </td>
-      <td> <input type="checkbox" [(ngModel)]="isnullCheckbox[i]"> </td>
-      <td *ngFor="let cell of row " contenteditable='true'>{{ cell }}</td>
-      <td> <input type="checkbox"    [(ngModel)]="delCheckbox[i]"> </td>
-    </tr>
-  </tbody>
+      <tr *ngFor="let row of matrixTableTranspone; let i = index" id="dataTable">
+        <td><input type="checkbox" [(ngModel)]="pKeyCheckbox[i]" /></td>
+        <td><input type="checkbox" [(ngModel)]="isnullCheckbox[i]" /></td>
+        <td *ngFor="let cell of row" contenteditable="true">{{ cell }}</td>
+        <td><input type="checkbox" [(ngModel)]="delCheckbox[i]" /></td>
+      </tr>
+    </tbody>
   </table>
-
-
 </aside>
 
 <div class="page-wrapper">
@@ -49,7 +51,7 @@
         </div>
       </nav>
     </header>
-    <div class="container-fluid py-3">
+    <div class="page-container py-3">
       <div class="row my-3">
         <div class="col">
           <label for="sqlQuery" class="form-label">SQL command</label>
@@ -66,23 +68,56 @@
       <div class="col">
         <label for="sqlColumns" class="form-label">Columns</label>
         <div class="input-group">
-          <textarea #column class="form-control form-control-sm" id="columns" rows="1">{{ displayColumn() }}</textarea>
-          <button class="btn btn-outline-primary btn-sm" (click)="copyToClipboard(column.value, 'column')">Copy</button>
+          <textarea #column readonly class="form-control form-control-sm" id="columns" rows="1">{{ displayColumn() }}</textarea>
+          <button class="btn btn-outline-primary btn-sm" (click)="copyToClipboard(column.value, 'column')">
+            Copy
+          </button>
         </div>
       </div>
       <br>
       <div>
         <label for="sqlTable">Table: </label>
-        <input type="text" id="tableName" [(ngModel)]="tableName" class="m-2 rounded p-1" placeholder="Table's name">
+        <input type="text" id="tableName" [(ngModel)]="tableName" class="m-2 rounded p-1" placeholder="Table's name" />
       </div>
       <div class="input-group">
         <textarea #table readonly class="form-control form-control-sm" id="sqlTable"
           rows="1">{{ displayTable() }}</textarea>
         <button class="btn btn-outline-primary btn-sm" (click)="copyToClipboard(table.value, 'table')">Copy</button>
       </div>
+      <br>
       <div>
-        <label>Test for type:</label>
-        <textarea class="form-control form-control-sm" id="test">{{ displayMatrixTableTranspone() }}</textarea>
+        <label for="sqlTable">Temp table name: </label>
+        <input type="text" id="tempTableName" [(ngModel)]="tempTableName" class="m-2 rounded p-1 "
+          placeholder="Temp table's name">
+      </div>
+      <label>Temp Table:</label>
+      <div class="input-group">
+        <textarea #tempTable appExpandable [expanded]="textarea1Expanded" readonly class="form-control form-control-sm" id="tempTable">
+IF NOT OBJECT_ID('TempDB..#{{ tempTableName }}') IS NULL DROP TABLE #{{tempTableName}}
+CREATE TABLE #{{ tempTableName }} ({{ displayMatrixTableTranspone() }}
+                                     PRIMARY KEY CLUSTERED(Temp text))
+
+-- PK später anlegen: ALTER TABLE #{{tempTableName}} ADD PRIMARY KEY CLUSTERED (Temp text)</textarea>
+        <button class="btn btn-outline-primary btn-sm" (click)="copyToClipboard(tempTable.value, 'tempTable')">
+          Copy
+        </button>
+      </div>
+      <label class="mt-3">Insert into:</label>
+      <div class="input-group">
+        <textarea #insertInto appExpandable [expanded]="textarea2Expanded" readonly class="form-control form-control-sm" id="insertInto">
+INSERT INTO #{{ tempTableName }} WITH (TABLOCKX) ({{ displayColumn() }})
+SELECT {{displayTableAndField()}}
+FROM dbo.{{tableName}}
+</textarea>
+        <button class="btn btn-outline-primary btn-sm" (click)="copyToClipboard(insertInto.value, 'tempTable')">Copy</button>
+      </div>
+      <label>Temp + Insert</label>
+      <div class="input-group">
+        <textarea #tempAndInsert appExpandable [expanded]="textarea3Expanded" readonly class="form-control form-control-sm" id="tempAndInsert">
+{{tempTable.value}}
+
+{{insertInto.value}}</textarea>
+        <button class="btn btn-outline-primary btn-sm" (click)="copyToClipboard(tempAndInsert.value, 'tempTable')">Copy</button>
       </div>
     </div>
   </div>
