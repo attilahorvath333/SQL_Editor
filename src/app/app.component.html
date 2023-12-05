@@ -125,6 +125,66 @@ FROM dbo.{{tableName}}
 {{insertInto.value}}</textarea>
         <button class="btn btn-outline-primary btn-sm" (click)="copyToClipboard(tempAndInsert.value, 'tempTable')">Copy</button>
       </div>
+      <label>Merge</label>
+      <div class="input-group">
+        <textarea #merge appExpandable [expanded]="textarea4Expanded" readonly class="form-control form-control-sm" id="merge"></textarea>
+        <button class="btn btn-outline-primary btn-sm" (click)="copyToClipboard(merge.value, 'tempTable')">Copy</button>
+      </div>
+      <label>Group</label>
+      <div class="input-group">
+        <textarea #group readonly class="form-control form-control-sm" id="group"></textarea>
+        <button class="btn btn-outline-primary btn-sm" (click)="copyToClipboard(group.value, 'tempTable')">Copy</button>
+      </div>
+      <label>TabName1</label>
+      <div class="input-group">
+        <textarea #tabName1 readonly class="form-control form-control-sm" id="TabName1"></textarea>
+        <button class="btn btn-outline-primary btn-sm" (click)="copyToClipboard(tabName1.value, 'tempTable')">Copy</button>
+      </div>
+      <label>TabName2</label>
+      <div class="input-group">
+        <textarea #tabName2 readonly class="form-control form-control-sm" id="TabName2"></textarea>
+        <button class="btn btn-outline-primary btn-sm" (click)="copyToClipboard(tabName2.value, 'tempTable')">Copy</button>
+      </div>
+      <label>TabName3</label>
+      <div class="input-group">
+        <textarea #tabName3 readonly class="form-control form-control-sm" id="TabName3"></textarea>
+        <button class="btn btn-outline-primary btn-sm" (click)="copyToClipboard(tabName3.value, 'tempTable')">Copy</button>
+      </div>
+      <label>TabName4</label>
+      <div class="input-group">
+        <textarea #tabName4 readonly class="form-control form-control-sm" id="TabName4"></textarea>
+        <button class="btn btn-outline-primary btn-sm" (click)="copyToClipboard(tabName4.value, 'tempTable')">Copy</button>
+      </div>
+      <label>Anfang</label>
+      <div class="input-group">
+        <textarea #anfang readonly class="form-control form-control-sm" id="anfang"></textarea>
+        <button class="btn btn-outline-primary btn-sm" (click)="copyToClipboard(anfang.value, 'tempTable')">Copy</button>
+      </div>
+      <label>Ende</label>
+      <div class="input-group">
+        <textarea #ende readonly class="form-control form-control-sm" id="ende"></textarea>
+        <button class="btn btn-outline-primary btn-sm" (click)="copyToClipboard(ende.value, 'tempTable')">Copy</button>
+      </div>
+      <label>Replacer</label>
+      <div class="input-group">
+        <textarea #replacer readonly class="form-control form-control-sm" id="replacer"></textarea>
+        <button class="btn btn-outline-primary btn-sm" (click)="copyToClipboard(replacer.value, 'tempTable')">Copy</button>
+      </div>
+      <label>???</label>
+      <div class="input-group">
+        <textarea #wtfIsThis readonly class="form-control form-control-sm" id="wtfIsThis"></textarea>
+        <button class="btn btn-outline-primary btn-sm" (click)="copyToClipboard(wtfIsThis.value, 'tempTable')">Copy</button>
+      </div>
+      <label>Free helper</label>
+      <div class="input-group">
+        <textarea #freeHelper readonly class="form-control form-control-sm" id="freeHelper"></textarea>
+        <button class="btn btn-outline-primary btn-sm" (click)="copyToClipboard(freeHelper.value, 'tempTable')">Copy</button>
+      </div>
+      <label>AddColumns_TempTab</label>
+      <div class="input-group">
+        <textarea #addColumnsTemp readonly class="form-control form-control-sm" id="addColumnsTemp"></textarea>
+        <button class="btn btn-outline-primary btn-sm" (click)="copyToClipboard(addColumnsTemp.value, 'tempTable')">Copy</button>
+      </div>
     </div>
   </div>
 </div>
