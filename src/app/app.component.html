@@ -25,12 +25,6 @@
       <button class="btn btn-sm btn-outline-primary" (click)="updateRows()" id="updateButton" hidden="true">Update</button>
     </div>
   </div>
-  <div class="row my-3">
-    <div class="col">
-      <button class="btn btn-sm btn-outline-primary" (click)="editRows()" id="editButton">Edit</button>
-      <button class="btn btn-sm btn-outline-primary" (click)="updateRows()" id="updateButton" hidden="true">Update</button>
-    </div>
-  </div>
   <table id="columnTable">
     <thead>
       <tr>
@@ -105,8 +99,8 @@
       <label>Temp Table:</label>
       <div class="input-group">
         <textarea #tempTable appExpandable [expanded]="textarea1Expanded" readonly class="form-control form-control-sm" id="tempTable">
-IF NOT OBJECT_ID('TempDB..#{{ tempTableName }}') IS NULL DROP TABLE #{{tempTableName}}
-CREATE TABLE #{{ tempTableName }} ({{ displayMatrixTableTranspone() }}
+IF NOT OBJECT_ID('TempDB..#{{tempTableName}}') IS NULL DROP TABLE #{{tempTableName}}
+CREATE TABLE #{{tempTableName}} ({{displayMatrixTableTranspone()}}
                                      PRIMARY KEY CLUSTERED(Temp text))
 
 -- PK später anlegen: ALTER TABLE #{{tempTableName}} ADD PRIMARY KEY CLUSTERED (Temp text)</textarea>
