@@ -129,8 +129,8 @@ export class AppComponent implements OnInit {
     for (let i = 0; i < tableFields.rows.length - 1; i++) {
       const checkboxField = document.createElement('input');
       checkboxField.type = 'checkbox';
-      let name1 = tableFields.rows[i + 1].cells[2].textContent as string;
-      let name2 = tableFields.rows[i + 1].cells[3].textContent as string;
+      let name1 = tableFields.rows[i + 1].cells[2].textContent?.trim() as string;
+      let name2 = tableFields.rows[i + 1].cells[3].textContent?.trim() as string;
       this.matrixTableTranspone[i][0] = name1;
       this.matrixTableTranspone[i][1] = name2;
       tableFields.rows[i + 1].cells[2].style.backgroundColor = '#fff';
@@ -205,7 +205,10 @@ export class AppComponent implements OnInit {
     let emptyArray: string[] = [];
     emptyArray.fill("", 0, this.columns.length);
     this.matrixTable[1] = emptyArray.slice();
-    this.matrixTable[1].fill("", 0, this.columns.length);
+    for (let i = 0; i < this.columns.length; i++) {
+      this.matrixTable[1][i]= " ";
+    }
+    //this.matrixTable[1].fill("d", 0, this.columns.length);
     this.matrixTableTranspone = this.transposeMatrix(this.matrixTable);
 
 
