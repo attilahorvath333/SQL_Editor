@@ -92,11 +92,10 @@
       </div>
       <br>
       <div>
-        <label for="sqlTable">Temp table name: </label>
+        <label for="sqlTable">Temp table: </label>
         <input type="text" id="tempTableName" [(ngModel)]="tempTableName" class="m-2 rounded p-1 "
           placeholder="Temp table's name">
       </div>
-      <label>Temp Table:</label>
       <div class="input-group">
         <textarea #tempTable appExpandable [expanded]="textarea1Expanded" readonly class="form-control form-control-sm" id="tempTable">
 IF NOT OBJECT_ID('TempDB..#{{tempTableName}}') IS NULL DROP TABLE #{{tempTableName}}
