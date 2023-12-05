@@ -38,9 +38,10 @@ export class AppComponent implements OnInit {
   matrixTable: string[][] = [];
   //matrixTableTranspone: contains the fields and types
   matrixTableTranspone: string[][] = [];
-  pKeyCheckbox: boolean[] = new Array(500).fill(false);
-  delCheckbox: boolean[] = new Array(500).fill(false);
-  isnullCheckbox: boolean[] = new Array(500).fill(false);
+  //pKeyCheckbox: boolean[] = [];
+  pKeyCheckbox: boolean[] =  []; //new Array(1).fill(false);
+  delCheckbox: boolean[] = []; // new Array(500).fill(false);
+  isnullCheckbox: boolean[] = [] // new Array(500).fill(false);
 
   title = 'sql-query-executor';
   regexTable: RegExp = /(from|join)\s+(\w+)/g;
@@ -50,7 +51,7 @@ export class AppComponent implements OnInit {
     private snackBar: MatSnackBar
   ) { }
   ngOnInit(): void {
-    throw new Error('Method not implemented.');
+    
   }
 
   adRow() {
@@ -199,6 +200,11 @@ export class AppComponent implements OnInit {
     });
   }
 
+  teszt(){
+    for (let i=0; i<10; i++){
+      console.log("true vagy false: " + this.pKeyCheckbox[i]);
+    }
+  }
 
   executeQuery() {
     // Parse the SQL query to extract column names
@@ -208,8 +214,17 @@ export class AppComponent implements OnInit {
     let emptyArray: string[] = [];
     emptyArray.fill("", 0, this.columns.length);
     this.matrixTable[1] = emptyArray.slice();
-    this.matrixTable[1].fill("", 0, this.columns.length);
+    for (let i = 0; i < this.columns.length; i++) {
+      this.matrixTable[1][i]= " ";
+      this.pKeyCheckbox[i]=false;
+      this.isnullCheckbox[i]=false;
+      this.delCheckbox[i]=false;
+    }
+    //this.matrixTable[1].fill("d", 0, this.columns.length);
     this.matrixTableTranspone = this.transposeMatrix(this.matrixTable);
+    
+
+
   }
   /*
     getTableNames(sqlQuery: string): string[] | null {
