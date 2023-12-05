@@ -209,7 +209,7 @@ export class AppComponent implements OnInit {
     emptyArray.fill("", 0, this.columns.length);
     this.matrixTable[1] = emptyArray.slice();
     for (let i = 0; i < this.columns.length; i++) {
-      this.matrixTable[1][i]= " ";
+      this.matrixTable[1][i]= "";
     }
     //this.matrixTable[1].fill("d", 0, this.columns.length);
     this.matrixTableTranspone = this.transposeMatrix(this.matrixTable);
@@ -308,7 +308,7 @@ export class AppComponent implements OnInit {
   }
 
   displayMatrixTableTranspone(): string {
-    const columnAndType = this.matrixTableTranspone.map(matrix => `${matrix[0]}` + '' + `${matrix[1]}`).join(', ');
+    const columnAndType = this.matrixTableTranspone.map(matrix => `${matrix[0]}` + ' ' + `${matrix[1]}`).join(', ');
     //console.log(this.matrixTableTranspone);
     return `${columnAndType}`;
   }
