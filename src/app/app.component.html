@@ -99,10 +99,10 @@
       <div class="input-group">
         <textarea #tempTable appExpandable [expanded]="textarea1Expanded" readonly class="form-control form-control-sm" id="tempTable">
 IF NOT OBJECT_ID('TempDB..#{{tempTableName}}') IS NULL DROP TABLE #{{tempTableName}}
-CREATE TABLE #{{tempTableName}} ({{displayMatrixTableTranspone()}}
-                                     PRIMARY KEY CLUSTERED(Temp text))
+CREATE TABLE #{{tempTableName}} ({{displayEverything()}}
+                                     PRIMARY KEY CLUSTERED({{displayPKey()}}))
 
--- PK später anlegen: ALTER TABLE #{{tempTableName}} ADD PRIMARY KEY CLUSTERED (Temp text)</textarea>
+-- PK später anlegen: ALTER TABLE #{{tempTableName}} ADD PRIMARY KEY CLUSTERED ({{displayPKey()}})</textarea>
         <button class="btn btn-outline-primary btn-sm" (click)="copyToClipboard(tempTable.value, 'tempTable')">
           Copy
         </button>
@@ -119,7 +119,9 @@ FROM dbo.{{tableName}}
       <label>Temp + Insert</label>
       <div class="input-group">
         <textarea #tempAndInsert appExpandable [expanded]="textarea3Expanded" readonly class="form-control form-control-sm" id="tempAndInsert">
-{{tempTable.value}}
+IF NOT OBJECT_ID('TempDB..#{{tempTableName}}') IS NULL DROP TABLE #{{tempTableName}}
+CREATE TABLE #{{tempTableName}} ({{displayEverything()}}
+                                  PRIMARY KEY CLUSTERED({{displayPKey()}}))
 
 {{insertInto.value}}</textarea>
         <button class="btn btn-outline-primary btn-sm" (click)="copyToClipboard(tempAndInsert.value, 'tempTable')">Copy</button>
@@ -129,40 +131,70 @@ FROM dbo.{{tableName}}
         <textarea #merge appExpandable [expanded]="textarea4Expanded" readonly class="form-control form-control-sm" id="merge"></textarea>
         <button class="btn btn-outline-primary btn-sm" (click)="copyToClipboard(merge.value, 'tempTable')">Copy</button>
       </div>
+      <div>
+        <label for="groupName">Group name: </label>
+        <input type="text" id="groupName" [(ngModel)]="groupName" class="m-2 rounded p-1 "
+          placeholder="Group's name">
+      </div>
+      <div>
+        <label for="tabName">Tab name: </label>
+        <input type="text" id="tabName" [(ngModel)]="tabName" class="m-2 rounded p-1 "
+          placeholder="Tab's name">
+      </div>
       <label>Group</label>
       <div class="input-group">
-        <textarea #group readonly class="form-control form-control-sm" id="group"></textarea>
+        <textarea #group readonly class="form-control form-control-sm" id="group" rows="1">{{displayGroup()}}</textarea>
         <button class="btn btn-outline-primary btn-sm" (click)="copyToClipboard(group.value, 'tempTable')">Copy</button>
       </div>
       <label>TabName1</label>
       <div class="input-group">
-        <textarea #tabName1 readonly class="form-control form-control-sm" id="TabName1"></textarea>
+        <textarea #tabName1 readonly class="form-control form-control-sm" id="TabName1" rows="1">{{displayTab1()}}</textarea>
         <button class="btn btn-outline-primary btn-sm" (click)="copyToClipboard(tabName1.value, 'tempTable')">Copy</button>
       </div>
-      <label>TabName2</label>
-      <div class="input-group">
-        <textarea #tabName2 readonly class="form-control form-control-sm" id="TabName2"></textarea>
-        <button class="btn btn-outline-primary btn-sm" (click)="copyToClipboard(tabName2.value, 'tempTable')">Copy</button>
+      <div>
+        <label for="tabAfterName">Tab after: </label>
+        <input type="text" id="tabAfterName" [(ngModel)]="tabAfterName" class="m-2 rounded p-1 "
+          placeholder="Tab's after">
       </div>
-      <label>TabName3</label>
+      <label>Tab after</label>
       <div class="input-group">
-        <textarea #tabName3 readonly class="form-control form-control-sm" id="TabName3"></textarea>
-        <button class="btn btn-outline-primary btn-sm" (click)="copyToClipboard(tabName3.value, 'tempTable')">Copy</button>
+        <textarea #tabAfter readonly class="form-control form-control-sm" id="TabName2" rows="1">{{displayAfter()}}</textarea>
+        <button class="btn btn-outline-primary btn-sm" (click)="copyToClipboard(tabAfter.value, 'tempTable')">Copy</button>
+      </div>
+      <div>
+        <label for="tabBeforeName">Tab before: </label>
+        <input type="text" id="tabBeforeName" [(ngModel)]="tabBeforeName" class="m-2 rounded p-1 "
+          placeholder="Tab's before">
+      </div>
+      <label>Tab before</label>
+      <div class="input-group">
+        <textarea #tabBefore readonly class="form-control form-control-sm" id="TabName3" rows="1">{{displayBefore()}}</textarea>
+        <button class="btn btn-outline-primary btn-sm" (click)="copyToClipboard(tabBefore.value, 'tempTable')">Copy</button>
+      </div>
+      <div>
+        <label for="tab4">Tab 4: </label>
+        <input type="text" id="tab4" [(ngModel)]="tab4" class="m-2 rounded p-1 "
+          placeholder="Tab 4">
       </div>
       <label>TabName4</label>
       <div class="input-group">
-        <textarea #tabName4 readonly class="form-control form-control-sm" id="TabName4"></textarea>
+        <textarea #tabName4 readonly class="form-control form-control-sm" id="TabName4" rows="1">{{displayTab4()}}</textarea>
         <button class="btn btn-outline-primary btn-sm" (click)="copyToClipboard(tabName4.value, 'tempTable')">Copy</button>
       </div>
-      <label>Anfang</label>
-      <div class="input-group">
-        <textarea #anfang readonly class="form-control form-control-sm" id="anfang"></textarea>
-        <button class="btn btn-outline-primary btn-sm" (click)="copyToClipboard(anfang.value, 'tempTable')">Copy</button>
+      <div>
+        <label for="beginning">Beginning:</label>
+        <input type="text" id="beginning" [(ngModel)]="beginning" class="m-2 rounded p-1 "
+          placeholder="Beginning">
       </div>
-      <label>Ende</label>
+      <div>
+        <label for="end">End: </label>
+        <input type="text" id="end" [(ngModel)]="end" class="m-2 rounded p-1 "
+          placeholder="End">
+      </div>
+      <label>Beginning & end</label>
       <div class="input-group">
-        <textarea #ende readonly class="form-control form-control-sm" id="ende"></textarea>
-        <button class="btn btn-outline-primary btn-sm" (click)="copyToClipboard(ende.value, 'tempTable')">Copy</button>
+        <textarea #begin appExpandable [expanded]="textarea5Expanded" readonly class="form-control form-control-sm" id="begin" rows="1">{{displayBeginningAndEnd()}}</textarea>
+        <button class="btn btn-outline-primary btn-sm" (click)="copyToClipboard(begin.value, 'tempTable')">Copy</button>
       </div>
       <label>Replacer</label>
       <div class="input-group">

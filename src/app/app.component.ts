@@ -28,6 +28,7 @@ export class AppComponent implements OnInit {
   textarea2Expanded: boolean = false;
   textarea3Expanded: boolean = false;
   textarea4Expanded: boolean = false;
+  textarea5Expanded: boolean = false;
 
   sqlQuery: string = '';
   columns: string[] = [];
@@ -35,11 +36,18 @@ export class AppComponent implements OnInit {
   columnsTable: string[] = [];
   tableName: string = '';
   tempTableName: string = '';
+  groupName: string = '';
+  tabName: string = '';
+  tabAfterName: string = '';
+  tabBeforeName: string = '';
+  tab4: string = '';
+  beginning: string = '';
+  end: string = '';
   matrixTable: string[][] = [];
   //matrixTableTranspone: contains the fields and types
   matrixTableTranspone: string[][] = [];
   //pKeyCheckbox: boolean[] = [];
-  pKeyCheckbox: boolean[] =  []; //new Array(1).fill(false);
+  pKeyCheckbox: boolean[] = []; //new Array(1).fill(false);
   delCheckbox: boolean[] = []; // new Array(500).fill(false);
   isnullCheckbox: boolean[] = [] // new Array(500).fill(false);
 
@@ -51,7 +59,7 @@ export class AppComponent implements OnInit {
     private snackBar: MatSnackBar
   ) { }
   ngOnInit(): void {
-    
+
   }
 
   adRow() {
@@ -200,8 +208,8 @@ export class AppComponent implements OnInit {
     });
   }
 
-  teszt(){
-    for (let i=0; i<10; i++){
+  teszt() {
+    for (let i = 0; i < 10; i++) {
       console.log("true vagy false: " + this.pKeyCheckbox[i]);
     }
   }
@@ -215,14 +223,14 @@ export class AppComponent implements OnInit {
     emptyArray.fill("", 0, this.columns.length);
     this.matrixTable[1] = emptyArray.slice();
     for (let i = 0; i < this.columns.length; i++) {
-      this.matrixTable[1][i]= " ";
-      this.pKeyCheckbox[i]=false;
-      this.isnullCheckbox[i]=false;
-      this.delCheckbox[i]=false;
+      this.matrixTable[1][i] = " ";
+      this.pKeyCheckbox[i] = false;
+      this.isnullCheckbox[i] = false;
+      this.delCheckbox[i] = false;
     }
     //this.matrixTable[1].fill("d", 0, this.columns.length);
     this.matrixTableTranspone = this.transposeMatrix(this.matrixTable);
-    
+
 
 
   }
@@ -320,14 +328,60 @@ export class AppComponent implements OnInit {
   }
 
   displayMatrixTableTranspone(): string {
-    const columnAndType = this.matrixTableTranspone.map(matrix => `${matrix[0]}` + ' ' + `${matrix[1]}`).join(', ');
-    //console.log(this.matrixTableTranspone);
-    return `${columnAndType}`;
+    const combinedInfo = this.matrixTableTranspone.map(matrix => `${matrix[0]} ${matrix[1]}`).join(', ');
+    return combinedInfo;
+  }
+
+  displayEverything(): string {
+    const combinedInfo = this.matrixTableTranspone.map((matrix, index) => {
+      const checkboxInfo = this.isnullCheckbox[index] ? `not null` : `null`;
+      return `${matrix[0]} ${matrix[1]} ${checkboxInfo}`;
+    }).join(', ');
+
+    return combinedInfo;
+  }
+
+  displayPKey(): string {
+    const combinedInfo = this.matrixTableTranspone.map((matrix, index) => {
+      const checkboxInfo = this.pKeyCheckbox[index] ? `${matrix[0]}` : '';
+      return `${checkboxInfo}`;
+    }).filter(Boolean).join(', ').trim();
+    return combinedInfo;
   }
 
   displayTableAndField(): string {
     const tableNameAndField = this.matrixTableTranspone.map(matrix => `${this.tableName}` + '.' + `${matrix[0]}`).join(', ');
     return `${tableNameAndField}`
+  }
+
+  displayGroup(): string {
+    const group = this.matrixTableTranspone.map(matrix => `${this.groupName}` + '('+ `${this.tabName}` + '.' + `${matrix[0]}` + ') ' + `${matrix[0]}`).join(', ');
+    return `${group}`;
+  }
+
+  displayTab1(): string {
+    const group = this.matrixTableTranspone.map(matrix => `${matrix[0]}` + ' = ' + `${this.tabName}` + '.' +`${matrix[0]}`).join(', ');
+    return `${group}`;
+  }
+
+  displayAfter(): string {
+    const after = this.matrixTableTranspone.map(matrix => `${matrix[0]}` + ' ' +`${this.tabAfterName}`).join(', ');
+    return `${after}`;
+  }
+
+  displayBefore(): string {
+    const before = this.matrixTableTranspone.map(matrix => `${this.tabBeforeName}` + ' ' + `${matrix[0]}`).join(', ');
+    return `${before}`;
+  }
+
+  displayTab4(): string {
+    const tabName4 = this.matrixTableTranspone.map(matrix => `${this.tab4}` + '(' + `${this.tabName}` + '.' +`${matrix[0]}` + ', ' + `${this.tabBeforeName}` + ') ' + `${matrix[0]}`).join(', ');
+    return `${tabName4}`;
+  }
+
+  displayBeginningAndEnd(): string {
+    const beginningAndEnd = this.matrixTableTranspone.map(matrix => `${this.beginning}` + `${matrix[0]}` + `${this.end}`).join('\n');
+    return `${beginningAndEnd}`;
   }
 
 }
