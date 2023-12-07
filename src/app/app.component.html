@@ -97,12 +97,7 @@
           placeholder="Temp table's name">
       </div>
       <div class="input-group">
-        <textarea #tempTable appExpandable [expanded]="textarea1Expanded" readonly class="form-control form-control-sm" id="tempTable">
-IF NOT OBJECT_ID('TempDB..#{{tempTableName}}') IS NULL DROP TABLE #{{tempTableName}}
-CREATE TABLE #{{tempTableName}} ({{displayEverything()}}
-                                     PRIMARY KEY CLUSTERED({{displayPKey()}}))
-
--- PK später anlegen: ALTER TABLE #{{tempTableName}} ADD PRIMARY KEY CLUSTERED ({{displayPKey()}})</textarea>
+        <textarea #tempTable appExpandable [expanded]="textarea1Expanded" readonly class="form-control form-control-sm" id="tempTable">{{createTempTable()}}</textarea>
         <button class="btn btn-outline-primary btn-sm" (click)="copyToClipboard(tempTable.value, 'tempTable')">
           Copy
         </button>
@@ -134,12 +129,12 @@ CREATE TABLE #{{tempTableName}} ({{displayEverything()}}
       <div>
         <label for="groupName">Group name: </label>
         <input type="text" id="groupName" [(ngModel)]="groupName" class="m-2 rounded p-1 "
-          placeholder="Group's name">
+          placeholder="test">
       </div>
       <div>
         <label for="tabName">Tab name: </label>
         <input type="text" id="tabName" [(ngModel)]="tabName" class="m-2 rounded p-1 "
-          placeholder="Tab's name">
+          placeholder="table">
       </div>
       <label>Group</label>
       <div class="input-group">
@@ -154,7 +149,7 @@ CREATE TABLE #{{tempTableName}} ({{displayEverything()}}
       <div>
         <label for="tabAfterName">Tab after: </label>
         <input type="text" id="tabAfterName" [(ngModel)]="tabAfterName" class="m-2 rounded p-1 "
-          placeholder="Tab's after">
+          placeholder="MONEY">
       </div>
       <label>Tab after</label>
       <div class="input-group">
@@ -164,7 +159,7 @@ CREATE TABLE #{{tempTableName}} ({{displayEverything()}}
       <div>
         <label for="tabBeforeName">Tab before: </label>
         <input type="text" id="tabBeforeName" [(ngModel)]="tabBeforeName" class="m-2 rounded p-1 "
-          placeholder="Tab's before">
+          placeholder="@">
       </div>
       <label>Tab before</label>
       <div class="input-group">
@@ -174,7 +169,7 @@ CREATE TABLE #{{tempTableName}} ({{displayEverything()}}
       <div>
         <label for="tab4">Tab 4: </label>
         <input type="text" id="tab4" [(ngModel)]="tab4" class="m-2 rounded p-1 "
-          placeholder="Tab 4">
+          placeholder="SUM">
       </div>
       <label>TabName4</label>
       <div class="input-group">
@@ -184,12 +179,12 @@ CREATE TABLE #{{tempTableName}} ({{displayEverything()}}
       <div>
         <label for="beginning">Beginning:</label>
         <input type="text" id="beginning" [(ngModel)]="beginning" class="m-2 rounded p-1 "
-          placeholder="Beginning">
+          placeholder="cte_MatchBase.">
       </div>
       <div>
         <label for="end">End: </label>
         <input type="text" id="end" [(ngModel)]="end" class="m-2 rounded p-1 "
-          placeholder="End">
+          placeholder=" = cte_mergeSource.">
       </div>
       <label>Beginning & end</label>
       <div class="input-group">
@@ -206,14 +201,24 @@ CREATE TABLE #{{tempTableName}} ({{displayEverything()}}
         <textarea #wtfIsThis readonly class="form-control form-control-sm" id="wtfIsThis"></textarea>
         <button class="btn btn-outline-primary btn-sm" (click)="copyToClipboard(wtfIsThis.value, 'tempTable')">Copy</button>
       </div>
+      <div>
+        <label for="freeHelper">Free helper: </label>
+        <input type="text" id="freeHelperID" [(ngModel)]="freeHelper" class="m-2 rounded p-1 "
+          placeholder=" = cte_mergeSource">
+      </div>
+      <div>
+        <label for="freeHelperBefore">End: </label>
+        <input type="text" id="freeHelperBeforeID" [(ngModel)]="freeHelperBefore" class="m-2 rounded p-1 "
+          placeholder="SMTH">
+      </div>
       <label>Free helper</label>
       <div class="input-group">
-        <textarea #freeHelper readonly class="form-control form-control-sm" id="freeHelper"></textarea>
-        <button class="btn btn-outline-primary btn-sm" (click)="copyToClipboard(freeHelper.value, 'tempTable')">Copy</button>
+        <textarea #freeHelperCopy readonly class="form-control form-control-sm" id="freeHelperDisplayID">{{displayFreeHelper()}}</textarea>
+        <button class="btn btn-outline-primary btn-sm" (click)="copyToClipboard(freeHelperCopy.value, 'tempTable')">Copy</button>
       </div>
       <label>AddColumns_TempTab</label>
       <div class="input-group">
-        <textarea #addColumnsTemp readonly class="form-control form-control-sm" id="addColumnsTemp"></textarea>
+        <textarea #addColumnsTemp readonly class="form-control form-control-sm" id="addColumnsTemp">{{displayEverything()}}</textarea>
         <button class="btn btn-outline-primary btn-sm" (click)="copyToClipboard(addColumnsTemp.value, 'tempTable')">Copy</button>
       </div>
     </div>

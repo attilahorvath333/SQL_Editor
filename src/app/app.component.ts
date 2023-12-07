@@ -43,6 +43,8 @@ export class AppComponent implements OnInit {
   tab4: string = '';
   beginning: string = '';
   end: string = '';
+  freeHelper: string = '';
+  freeHelperBefore: string = '';
   matrixTable: string[][] = [];
   //matrixTableTranspone: contains the fields and types
   matrixTableTranspone: string[][] = [];
@@ -382,6 +384,25 @@ export class AppComponent implements OnInit {
   displayBeginningAndEnd(): string {
     const beginningAndEnd = this.matrixTableTranspone.map(matrix => `${this.beginning}` + `${matrix[0]}` + `${this.end}`).join('\n');
     return `${beginningAndEnd}`;
+  }
+
+  displayFreeHelper(): string {
+    const freeHelper = this.matrixTableTranspone.map(matrix => `${this.freeHelperBefore}` + `${matrix[0]}` + `${this.freeHelper}` + '.' + `${matrix[0]}`).join(', ');
+    return `${freeHelper}`;
+  }
+
+  createTempTable(): string {
+    let existTrue: boolean = this.pKeyCheckbox.some(value => value === true);
+    if (!existTrue) {return "No Primary key selected"}
+    const sqlScript = `IF OBJECT_ID('TempDB..#${this.tempTableName}') IS NOT NULL
+        DROP TABLE #${this.tempTableName}
+
+        CREATE TABLE #${this.tempTableName} (
+        ${this.displayEverything()}
+        PRIMARY KEY CLUSTERED(${this.displayPKey()})
+      )
+    `;
+    return sqlScript;
   }
 
 }
