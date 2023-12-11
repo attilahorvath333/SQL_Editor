@@ -36,6 +36,7 @@ export class AppComponent implements OnInit {
   columnsTable: string[] = [];
   tableName: string = '';
   tempTableName: string = '';
+  mergeTableName: string = '';
   groupName: string = '';
   tabName: string = '';
   tabAfterName: string = '';
@@ -52,7 +53,7 @@ export class AppComponent implements OnInit {
   pKeyCheckbox: boolean[] = []; //new Array(1).fill(false);
   delCheckbox: boolean[] = []; // new Array(500).fill(false);
   isnullCheckbox: boolean[] = [] // new Array(500).fill(false);
-
+  showTextarea: boolean=false;
   title = 'sql-query-executor';
   regexTable: RegExp = /(from|join)\s+(\w+)/g;
   regexColumn: RegExp = /SELECT\s+(.+?)\s+FROM/i;
@@ -62,6 +63,10 @@ export class AppComponent implements OnInit {
   ) { }
   ngOnInit(): void {
 
+  }
+
+  onCheckboxChange(){
+    alert("változás :)");
   }
 
   adRow() {
@@ -355,6 +360,188 @@ export class AppComponent implements OnInit {
     const tableNameAndField = this.matrixTableTranspone.map(matrix => `${this.tableName}` + '.' + `${matrix[0]}`).join(', ');
     return `${tableNameAndField}`
   }
+
+  displayMergeCell(): string {
+    let mergeContent:string=
+    "DECLARE @merge"+this.mergeTableName+"Result as TABLE (mAction nvarchar(10),"+this.matrixTableTranspone.filter((matrix, index) => this.pKeyCheckbox[index]).map(matrix => `${"d"+matrix[0]}` +' '+ `${matrix[1]}`+' '+`${"i"+matrix[0]}` + ' ' + `${matrix[1]}`).join(', ')+");\n"+
+    "WITH cte_mergeSource AS\n"+
+    "   (SELECT "+this.matrixTableTranspone.map(matrix => `${this.mergeTableName+"new"}.${matrix[0]}`).join(', ')+"\n"+
+    "    FROM dbo."+this.mergeTableName+"new), \n"+
+    "   cte_mergeDestination AS \n"+
+    "   (SELECT "+this.matrixTableTranspone.map(matrix => `${this.mergeTableName}.${matrix[0]}`).join(', ')+"\n"+
+    "    FROM dbo."+this.mergeTableName+")\n"+
+    "   MERGE INTO cte_mergeDestination\n"+
+    "   USING cte_mergeSource\n"+
+    "   ON "+this.matrixTableTranspone.filter((matrix, index) => this.pKeyCheckbox[index]).map(matrix =>'cte_mergeDestination.'+ `${matrix[0]}` + ' = cte_mergeSource.'+ `${matrix[0]}`).join(' AND ')+"\n"+
+    "   WHEN MATCHED AND NOT EXISTS(SELECT "+this.matrixTableTranspone.filter((matrix, index) => !this.pKeyCheckbox[index]).map(matrix =>'cte_mergeDestination.' + `${matrix[0]}`).join(', ')+"\n"+
+    "                               INTERSECT \n"+
+    "                               SELECT "+this.matrixTableTranspone.filter((matrix, index) => !this.pKeyCheckbox[index]).map(matrix =>'cte_mergeSource.' + `${matrix[0]}`).join(', ')+")\n"+
+    "                               THEN\n"+
+    "       UPDATE SET "+ this.matrixTableTranspone.filter((matrix, index) => !this.pKeyCheckbox[index]).map(matrix => `${matrix[0]}`+' = cte_mergeSource.' + `${matrix[0]}`).join(', ')+"\n"+
+    "   WHEN NOT MATCHED BY TARGET THEN\n"+
+    "       INSERT (" +this.matrixTableTranspone.map(matrix => `${matrix[0]}`).join(', ')+")\n"+
+    "       VALUES (" +this.matrixTableTranspone.map(matrix => 'cte_mergeSource.'+`${matrix[0]}`).join(', ')+")\n"+
+    "   WHEN NOT MATCHED BY SOURCE THEN\n"+
+    "       DELETE\n"+
+    "   OUTPUT $action mAction, " + this.matrixTableTranspone.filter((matrix, index) => this.pKeyCheckbox[index]).map(matrix => `${"deleted."+matrix[0]}` +', '+`${"inserted."+matrix[0]}`).join(', ')+"\n"+
+    "   INTO @merge"+this.mergeTableName+"Result;\n"+
+    "DECLARE @stepBez VarChar(max) = ''\n"+
+    "SELECT @stepBez = '- Info zu Merge "+this.mergeTableName+" (INSERT = ' + CAST(COUNT(CASE WHEN tabvar.mAction = 'INSERT' THEN 1 END) AS VARCHAR(36)) + ', UPDATE = ' + CAST(COUNT(CASE WHEN tabvar.mAction = 'UPDATE' THEN 1 END) AS VARCHAR(36)) + ', DELETE = ' + CAST(COUNT(CASE WHEN tabvar.mAction = 'DELETE' THEN 1 END) AS VARCHAR(36)) + ') '\n"+
+    "FROM @mergekacsaResult tabvar"
+
+    let mergeContentSpBlock:string=
+    "-----------------------------------------------------------------------------------------------------------"+
+    "SELECT @stepBez = '- - merge in "+this.mergeTableName+"', @stepPrintCount = 1, @stepRaiseError = 1;"+
+    "-----------------------------------------------------------------------------------------------------------"+
+    "BEGIN TRY"+
+    "   DECLARE @merge"+this.mergeTableName+"Result as TABLE (mAction nvarchar(10),"+this.matrixTableTranspone.filter((matrix, index) => this.pKeyCheckbox[index]).map(matrix => `${"d"+matrix[0]}` +' '+ `${matrix[1]}`+' '+`${"i"+matrix[0]}` + ' ' + `${matrix[1]}`).join(', ')+");\n"+
+    "   WITH cte_mergeSource AS\n"+
+    "       (SELECT "+this.matrixTableTranspone.map(matrix => `${this.mergeTableName+"new"}.${matrix[0]}`).join(', ')+"\n"+
+    "       FROM dbo."+this.mergeTableName+"new), \n"+
+    "       cte_mergeDestination AS \n"+
+    "       (SELECT "+this.matrixTableTranspone.map(matrix => `${this.mergeTableName}.${matrix[0]}`).join(', ')+"\n"+
+    "       FROM dbo."+this.mergeTableName+")\n"+
+    "       MERGE INTO cte_mergeDestination\n"+
+    "       USING cte_mergeSource\n"+
+    "       ON "+this.matrixTableTranspone.filter((matrix, index) => this.pKeyCheckbox[index]).map(matrix =>'cte_mergeDestination.'+ `${matrix[0]}` + ' = cte_mergeSource.'+ `${matrix[0]}`).join(' AND ')+"\n"+
+    "       WHEN MATCHED AND NOT EXISTS(SELECT "+this.matrixTableTranspone.filter((matrix, index) => !this.pKeyCheckbox[index]).map(matrix =>'cte_mergeDestination.' + `${matrix[0]}`).join(', ')+"\n"+
+    "                                   INTERSECT \n"+
+    "                                   SELECT "+this.matrixTableTranspone.filter((matrix, index) => !this.pKeyCheckbox[index]).map(matrix =>'cte_mergeSource.' + `${matrix[0]}`).join(', ')+")\n"+
+    "                                   THEN\n"+
+    "          UPDATE SET "+ this.matrixTableTranspone.filter((matrix, index) => !this.pKeyCheckbox[index]).map(matrix => `${matrix[0]}`+' = cte_mergeSource.' + `${matrix[0]}`).join(', ')+"\n"+
+    "       WHEN NOT MATCHED BY TARGET THEN\n"+
+    "           INSERT (" +this.matrixTableTranspone.map(matrix => `${matrix[0]}`).join(', ')+")\n"+
+    "          VALUES (" +this.matrixTableTranspone.map(matrix => 'cte_mergeSource.'+`${matrix[0]}`).join(', ')+")\n"+
+    "       WHEN NOT MATCHED BY SOURCE THEN\n"+
+    "           DELETE\n"+
+    "       OUTPUT $action mAction, " + this.matrixTableTranspone.filter((matrix, index) => this.pKeyCheckbox[index]).map(matrix => `${"deleted."+matrix[0]}` +', '+`${"inserted."+matrix[0]}`).join(', ')+"\n"+
+    "       INTO @merge"+this.mergeTableName+"Result;\n"+
+    "       EXEC dbo.up_setProt @KatID, @stepBez OUTPUT, @SPName, '', @@ERROR, @ProtOnlyITL, 0 /*PrgNr*/, @Version, @DebugPrint, @stepPrintCount, @@RowCount, 2 /*Statement LogLevel*/, @GlobalLogLevel, @ErrorID OUTPUT, @RowCount OUTPUT;\n"+
+    "END TRY\n"+
+    "BEGIN CATCH\n"+
+    "   EXEC dbo.up_setProt @KatID, @stepBez OUTPUT, @SPName, '', @@ERROR, @ProtOnlyITL, 0 /*PrgNr*/, @Version, @DebugPrint, @stepPrintCount, @@RowCount, 4 /*Error LogLevel*/, @GlobalLogLevel, @ErrorID OUTPUT, @RowCount OUTPUT;\n"+
+    "   IF @stepRaiseError=1 RAISERROR (@stepBez, 11, 1, N'number', 5);\n"+
+    "   GOTO FEHLERHAFTESENDE;\n"+
+    "END CATCH\n"+
+    "\n"+
+    "-----------------------------------------------------------------------------------------------------------\n"+
+    "SELECT @stepBez = '- Info zu merge in "+this.mergeTableName+"', @stepPrintCount = 0, @stepRaiseError = 1;\n"+
+    "-----------------------------------------------------------------------------------------------------------\n"+
+    "BEGIN TRY\n"+
+    "   SELECT @stepBez = '- Info zu Merge "+this.mergeTableName+" (INSERT = ' + CAST(COUNT(CASE WHEN tabvar.mAction = 'INSERT' THEN 1 END) AS VARCHAR(36)) + ', UPDATE = ' + CAST(COUNT(CASE WHEN tabvar.mAction = 'UPDATE' THEN 1 END) AS VARCHAR(36)) + ', DELETE = ' + CAST(COUNT(CASE WHEN tabvar.mAction = 'DELETE' THEN 1 END) AS VARCHAR(36)) + ') '\n"+
+    "   FROM @mergekacsaResult tabvar\n"+
+    "   EXEC dbo.up_setProt @KatID, @stepBez OUTPUT, @SPName, '', @@ERROR, @ProtOnlyITL, 0 /*PrgNr*/, @Version, @DebugPrint, @stepPrintCount, @@RowCount, 2 /*Statement LogLevel*/, @GlobalLogLevel, @ErrorID OUTPUT, @RowCount OUTPUT;\n"+
+    "END TRY\n"+
+    "BEGIN CATCH\n"+
+    "   EXEC dbo.up_setProt @KatID, @stepBez OUTPUT, @SPName, '', @@ERROR, @ProtOnlyITL, 0 /*PrgNr*/, @Version, @DebugPrint, @stepPrintCount, @@RowCount, 4 /*Error LogLevel*/, @GlobalLogLevel, @ErrorID OUTPUT, @RowCount OUTPUT;\n"+
+    "   IF @stepRaiseError=1 RAISERROR (@stepBez, 11, 1, N'number', 5);\n"+
+    "   GOTO FEHLERHAFTESENDE;\n"+
+    "END CATCH"
+
+
+    let existTrue: boolean = this.pKeyCheckbox.some(value => value === true);
+    let mergeChk = document.getElementById('mergeCheck') as HTMLInputElement;
+
+
+    if (!existTrue) {return "No Primary key selected"}
+    else{
+      if (mergeChk.checked)
+      {return mergeContentSpBlock}
+      else {
+      return mergeContent }
+  }
+}
+
+  displayMergeCell(): string {
+    let mergeContent:string=
+    "DECLARE @merge"+this.mergeTableName+"Result as TABLE (mAction nvarchar(10),"+this.matrixTableTranspone.filter((matrix, index) => this.pKeyCheckbox[index]).map(matrix => `${"d"+matrix[0]}` +' '+ `${matrix[1]}`+' '+`${"i"+matrix[0]}` + ' ' + `${matrix[1]}`).join(', ')+");\n"+
+    "WITH cte_mergeSource AS\n"+
+    "   (SELECT "+this.matrixTableTranspone.map(matrix => `${this.mergeTableName+"new"}.${matrix[0]}`).join(', ')+"\n"+
+    "    FROM dbo."+this.mergeTableName+"new), \n"+
+    "   cte_mergeDestination AS \n"+
+    "   (SELECT "+this.matrixTableTranspone.map(matrix => `${this.mergeTableName}.${matrix[0]}`).join(', ')+"\n"+
+    "    FROM dbo."+this.mergeTableName+")\n"+
+    "   MERGE INTO cte_mergeDestination\n"+
+    "   USING cte_mergeSource\n"+
+    "   ON "+this.matrixTableTranspone.filter((matrix, index) => this.pKeyCheckbox[index]).map(matrix =>'cte_mergeDestination.'+ `${matrix[0]}` + ' = cte_mergeSource.'+ `${matrix[0]}`).join(' AND ')+"\n"+
+    "   WHEN MATCHED AND NOT EXISTS(SELECT "+this.matrixTableTranspone.filter((matrix, index) => !this.pKeyCheckbox[index]).map(matrix =>'cte_mergeDestination.' + `${matrix[0]}`).join(', ')+"\n"+
+    "                               INTERSECT \n"+
+    "                               SELECT "+this.matrixTableTranspone.filter((matrix, index) => !this.pKeyCheckbox[index]).map(matrix =>'cte_mergeSource.' + `${matrix[0]}`).join(', ')+")\n"+
+    "                               THEN\n"+
+    "       UPDATE SET "+ this.matrixTableTranspone.filter((matrix, index) => !this.pKeyCheckbox[index]).map(matrix => `${matrix[0]}`+' = cte_mergeSource.' + `${matrix[0]}`).join(', ')+"\n"+
+    "   WHEN NOT MATCHED BY TARGET THEN\n"+
+    "       INSERT (" +this.matrixTableTranspone.map(matrix => `${matrix[0]}`).join(', ')+")\n"+
+    "       VALUES (" +this.matrixTableTranspone.map(matrix => 'cte_mergeSource.'+`${matrix[0]}`).join(', ')+")\n"+
+    "   WHEN NOT MATCHED BY SOURCE THEN\n"+
+    "       DELETE\n"+
+    "   OUTPUT $action mAction, " + this.matrixTableTranspone.filter((matrix, index) => this.pKeyCheckbox[index]).map(matrix => `${"deleted."+matrix[0]}` +', '+`${"inserted."+matrix[0]}`).join(', ')+"\n"+
+    "   INTO @merge"+this.mergeTableName+"Result;\n"+
+    "DECLARE @stepBez VarChar(max) = ''\n"+
+    "SELECT @stepBez = '- Info zu Merge "+this.mergeTableName+" (INSERT = ' + CAST(COUNT(CASE WHEN tabvar.mAction = 'INSERT' THEN 1 END) AS VARCHAR(36)) + ', UPDATE = ' + CAST(COUNT(CASE WHEN tabvar.mAction = 'UPDATE' THEN 1 END) AS VARCHAR(36)) + ', DELETE = ' + CAST(COUNT(CASE WHEN tabvar.mAction = 'DELETE' THEN 1 END) AS VARCHAR(36)) + ') '\n"+
+    "FROM @mergekacsaResult tabvar"
+
+    let mergeContentSpBlock:string=
+    "-----------------------------------------------------------------------------------------------------------"+
+    "SELECT @stepBez = '- - merge in "+this.mergeTableName+"', @stepPrintCount = 1, @stepRaiseError = 1;"+
+    "-----------------------------------------------------------------------------------------------------------"+
+    "BEGIN TRY"+
+    "   DECLARE @merge"+this.mergeTableName+"Result as TABLE (mAction nvarchar(10),"+this.matrixTableTranspone.filter((matrix, index) => this.pKeyCheckbox[index]).map(matrix => `${"d"+matrix[0]}` +' '+ `${matrix[1]}`+' '+`${"i"+matrix[0]}` + ' ' + `${matrix[1]}`).join(', ')+");\n"+
+    "   WITH cte_mergeSource AS\n"+
+    "       (SELECT "+this.matrixTableTranspone.map(matrix => `${this.mergeTableName+"new"}.${matrix[0]}`).join(', ')+"\n"+
+    "       FROM dbo."+this.mergeTableName+"new), \n"+
+    "       cte_mergeDestination AS \n"+
+    "       (SELECT "+this.matrixTableTranspone.map(matrix => `${this.mergeTableName}.${matrix[0]}`).join(', ')+"\n"+
+    "       FROM dbo."+this.mergeTableName+")\n"+
+    "       MERGE INTO cte_mergeDestination\n"+
+    "       USING cte_mergeSource\n"+
+    "       ON "+this.matrixTableTranspone.filter((matrix, index) => this.pKeyCheckbox[index]).map(matrix =>'cte_mergeDestination.'+ `${matrix[0]}` + ' = cte_mergeSource.'+ `${matrix[0]}`).join(' AND ')+"\n"+
+    "       WHEN MATCHED AND NOT EXISTS(SELECT "+this.matrixTableTranspone.filter((matrix, index) => !this.pKeyCheckbox[index]).map(matrix =>'cte_mergeDestination.' + `${matrix[0]}`).join(', ')+"\n"+
+    "                                   INTERSECT \n"+
+    "                                   SELECT "+this.matrixTableTranspone.filter((matrix, index) => !this.pKeyCheckbox[index]).map(matrix =>'cte_mergeSource.' + `${matrix[0]}`).join(', ')+")\n"+
+    "                                   THEN\n"+
+    "          UPDATE SET "+ this.matrixTableTranspone.filter((matrix, index) => !this.pKeyCheckbox[index]).map(matrix => `${matrix[0]}`+' = cte_mergeSource.' + `${matrix[0]}`).join(', ')+"\n"+
+    "       WHEN NOT MATCHED BY TARGET THEN\n"+
+    "           INSERT (" +this.matrixTableTranspone.map(matrix => `${matrix[0]}`).join(', ')+")\n"+
+    "          VALUES (" +this.matrixTableTranspone.map(matrix => 'cte_mergeSource.'+`${matrix[0]}`).join(', ')+")\n"+
+    "       WHEN NOT MATCHED BY SOURCE THEN\n"+
+    "           DELETE\n"+
+    "       OUTPUT $action mAction, " + this.matrixTableTranspone.filter((matrix, index) => this.pKeyCheckbox[index]).map(matrix => `${"deleted."+matrix[0]}` +', '+`${"inserted."+matrix[0]}`).join(', ')+"\n"+
+    "       INTO @merge"+this.mergeTableName+"Result;\n"+
+    "       EXEC dbo.up_setProt @KatID, @stepBez OUTPUT, @SPName, '', @@ERROR, @ProtOnlyITL, 0 /*PrgNr*/, @Version, @DebugPrint, @stepPrintCount, @@RowCount, 2 /*Statement LogLevel*/, @GlobalLogLevel, @ErrorID OUTPUT, @RowCount OUTPUT;\n"+
+    "END TRY\n"+
+    "BEGIN CATCH\n"+
+    "   EXEC dbo.up_setProt @KatID, @stepBez OUTPUT, @SPName, '', @@ERROR, @ProtOnlyITL, 0 /*PrgNr*/, @Version, @DebugPrint, @stepPrintCount, @@RowCount, 4 /*Error LogLevel*/, @GlobalLogLevel, @ErrorID OUTPUT, @RowCount OUTPUT;\n"+
+    "   IF @stepRaiseError=1 RAISERROR (@stepBez, 11, 1, N'number', 5);\n"+
+    "   GOTO FEHLERHAFTESENDE;\n"+
+    "END CATCH\n"+
+    "\n"+
+    "-----------------------------------------------------------------------------------------------------------\n"+
+    "SELECT @stepBez = '- Info zu merge in "+this.mergeTableName+"', @stepPrintCount = 0, @stepRaiseError = 1;\n"+
+    "-----------------------------------------------------------------------------------------------------------\n"+
+    "BEGIN TRY\n"+
+    "   SELECT @stepBez = '- Info zu Merge "+this.mergeTableName+" (INSERT = ' + CAST(COUNT(CASE WHEN tabvar.mAction = 'INSERT' THEN 1 END) AS VARCHAR(36)) + ', UPDATE = ' + CAST(COUNT(CASE WHEN tabvar.mAction = 'UPDATE' THEN 1 END) AS VARCHAR(36)) + ', DELETE = ' + CAST(COUNT(CASE WHEN tabvar.mAction = 'DELETE' THEN 1 END) AS VARCHAR(36)) + ') '\n"+
+    "   FROM @mergekacsaResult tabvar\n"+
+    "   EXEC dbo.up_setProt @KatID, @stepBez OUTPUT, @SPName, '', @@ERROR, @ProtOnlyITL, 0 /*PrgNr*/, @Version, @DebugPrint, @stepPrintCount, @@RowCount, 2 /*Statement LogLevel*/, @GlobalLogLevel, @ErrorID OUTPUT, @RowCount OUTPUT;\n"+
+    "END TRY\n"+
+    "BEGIN CATCH\n"+
+    "   EXEC dbo.up_setProt @KatID, @stepBez OUTPUT, @SPName, '', @@ERROR, @ProtOnlyITL, 0 /*PrgNr*/, @Version, @DebugPrint, @stepPrintCount, @@RowCount, 4 /*Error LogLevel*/, @GlobalLogLevel, @ErrorID OUTPUT, @RowCount OUTPUT;\n"+
+    "   IF @stepRaiseError=1 RAISERROR (@stepBez, 11, 1, N'number', 5);\n"+
+    "   GOTO FEHLERHAFTESENDE;\n"+
+    "END CATCH"
+
+
+    let existTrue: boolean = this.pKeyCheckbox.some(value => value === true);
+    let mergeChk = document.getElementById('mergeCheck') as HTMLInputElement;
+
+
+    if (!existTrue) {return "No Primary key selected"}
+    else{
+      if (mergeChk.checked)
+      {return mergeContentSpBlock}
+      else {
+      return mergeContent }
+  }
+}
 
   displayGroup(): string {
     const group = this.matrixTableTranspone.map(matrix => `${this.groupName}` + '('+ `${this.tabName}` + '.' + `${matrix[0]}` + ') ' + `${matrix[0]}`).join(', ');

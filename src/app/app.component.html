@@ -122,9 +122,13 @@ CREATE TABLE #{{tempTableName}} ({{displayEverything()}}
         <button class="btn btn-outline-primary btn-sm" (click)="copyToClipboard(tempAndInsert.value, 'tempTable')">Copy</button>
       </div>
       <label>Merge</label>
+      <input type="text" id="tempTableName" [(ngModel)]="mergeTableName" class="m-2 rounded p-1 "
+      placeholder="">
+      <br>
+      <label> Include SP-Block </label><input type="checkbox"  [(ngModel)]="showTextarea" name="" id="mergeCheck"  >
       <div class="input-group">
-        <textarea #merge appExpandable [expanded]="textarea4Expanded" readonly class="form-control form-control-sm" id="merge"></textarea>
-        <button class="btn btn-outline-primary btn-sm" (click)="copyToClipboard(merge.value, 'tempTable')">Copy</button>
+        <textarea   #merge appExpandable [expanded]="textarea4Expanded" readonly class="form-control form-control-sm" id="merge" > {{displayMergeCell()}} </textarea>
+        <button class="btn btn-outline-primary btn-sm" (click)="copyToClipboard(merge.value, 'tempTable')" >Copy</button>
       </div>
       <div>
         <label for="groupName">Group name: </label>
