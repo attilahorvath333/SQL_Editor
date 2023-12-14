@@ -195,15 +195,16 @@ CREATE TABLE #{{tempTableName}} ({{displayEverything()}}
         <textarea #begin appExpandable [expanded]="textarea5Expanded" readonly class="form-control form-control-sm" id="begin" rows="1">{{displayBeginningAndEnd()}}</textarea>
         <button class="btn btn-outline-primary btn-sm" (click)="copyToClipboard(begin.value, 'tempTable')">Copy</button>
       </div>
+      <div>
+        <label for="replacer">Replacer:</label>
+        <input type="text" id="replacer" [(ngModel)]="replacer" class="m-2 rounded p-1 w-50"
+          placeholder="xxCOLxx =cte_mergeSource.xxCOLxx=cte_mergeNo.xxCOLxx=cte_mergeTest.xxCOLxx">
+          <p>It replaces the xxCOLxx with the column's name.</p>
+      </div>
       <label>Replacer</label>
       <div class="input-group">
-        <textarea #replacer readonly class="form-control form-control-sm" id="replacer"></textarea>
-        <button class="btn btn-outline-primary btn-sm" (click)="copyToClipboard(replacer.value, 'tempTable')">Copy</button>
-      </div>
-      <label>???</label>
-      <div class="input-group">
-        <textarea #wtfIsThis readonly class="form-control form-control-sm" id="wtfIsThis"></textarea>
-        <button class="btn btn-outline-primary btn-sm" (click)="copyToClipboard(wtfIsThis.value, 'tempTable')">Copy</button>
+        <textarea #replacerValue appExpandable [expanded]="textarea6Expanded" readonly class="form-control form-control-sm" id="replacer">{{displayReplacer(replacer)}}</textarea>
+        <button class="btn btn-outline-primary btn-sm" (click)="copyToClipboard(replacerValue.value, 'tempTable')">Copy</button>
       </div>
       <div>
         <label for="freeHelper">Free helper: </label>
@@ -217,12 +218,12 @@ CREATE TABLE #{{tempTableName}} ({{displayEverything()}}
       </div>
       <label>Free helper</label>
       <div class="input-group">
-        <textarea #freeHelperCopy readonly class="form-control form-control-sm" id="freeHelperDisplayID">{{displayFreeHelper()}}</textarea>
+        <textarea #freeHelperCopy readonly class="form-control form-control-sm" id="freeHelperDisplayID" rows="1">{{displayFreeHelper()}}</textarea>
         <button class="btn btn-outline-primary btn-sm" (click)="copyToClipboard(freeHelperCopy.value, 'tempTable')">Copy</button>
       </div>
       <label>AddColumns_TempTab</label>
       <div class="input-group">
-        <textarea #addColumnsTemp readonly class="form-control form-control-sm" id="addColumnsTemp">{{displayEverything()}}</textarea>
+        <textarea #addColumnsTemp readonly class="form-control form-control-sm" id="addColumnsTemp" rows="1">{{displayEverything()}}</textarea>
         <button class="btn btn-outline-primary btn-sm" (click)="copyToClipboard(addColumnsTemp.value, 'tempTable')">Copy</button>
       </div>
     </div>

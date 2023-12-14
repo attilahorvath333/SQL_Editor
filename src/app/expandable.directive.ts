@@ -15,8 +15,9 @@ export class ExpandableDirective {
   private toggleTextarea() {
     const textarea = this.el.nativeElement;
     if (this.expanded) {
-      // Set the number of rows to display the entire content
-      this.renderer.setAttribute(textarea, 'rows', '10'); // Adjust the number of rows as needed
+      // Set the number of rows based on the length of the textarea's value
+      const numberOfRows = textarea.value.split('\n').length;
+      this.renderer.setAttribute(textarea, 'rows', numberOfRows.toString());
     } else {
       // Set the number of rows to display 1 row
       this.renderer.setAttribute(textarea, 'rows', '1');
