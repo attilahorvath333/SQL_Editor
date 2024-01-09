@@ -14,6 +14,7 @@ import { text } from 'stream/consumers';
 export class AppComponent {
 
   sqlQuery: string = '';
+  sqlQuery1: string = '';
   columns: string[] = [];
 
 
